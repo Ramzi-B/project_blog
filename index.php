@@ -1,16 +1,16 @@
 <?php
-    require_once 'inc/utils.php';
+require_once 'inc/utils.php';
 
-    // Connect to the database
-    try {
-        $db = new PDO('mysql:host=localhost;dbname=tp_blog;charset=utf8', 'root', 'rboxer',
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-            ]
-        );
-    } catch (Exception $e) {
-        die('Error: '.$e->getMessage());
-    }
+// Connect to the database
+try {
+    $db = new PDO('mysql:host=localhost;dbname=tp_blog;charset=utf8', 'root', 'rboxer',
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]
+    );
+} catch (Exception $e) {
+    die('Error: '.$e->getMessage());
+}
 ?>
 <!doctype html>
 <html lang="fr">
@@ -33,27 +33,28 @@
 
                 <?php
 
-                    $sql = 'SELECT id, title, content, created_at FROM posts';
-                    $statement = $db->query($sql);
+                // Get all posts
+                $sql = 'SELECT id, title, content, created_at FROM posts';
+                $statement = $db->query($sql);
 
-                    while ($posts = $statement->fetch()) {
-                        ?>
+                while ($posts = $statement->fetch()) {
+                    ?>
 
-                        <div class="card">
-                            <h1>
-                                <?php echo htmlspecialchars($posts['title']); ?>
-                                <em><?php echo htmlspecialchars($posts['created_at']); ?></em>
-                            </h1>
+                    <div class="card">
+                        <h1>
+                            <?php echo htmlspecialchars($posts['title']); ?>
+                            <em><?php echo htmlspecialchars($posts['created_at']); ?></em>
+                        </h1>
 
-                            <p>
-                                <?php echo htmlspecialchars($posts['content']) ?>
-                            </p>
+                        <p>
+                            <?php echo htmlspecialchars($posts['content']) ?>
+                        </p>
 
-                            <a href="show.php?post=<?php echo intval($posts['id']); ?>">Voir plus</a>
-                        </div>
+                        <a href="show.php?post=<?php echo intval($posts['id']); ?>">Voir plus</a>
+                    </div>
 
-                        <?php
-                    }
+                    <?php
+                }
                 ?>
 
         </section>
