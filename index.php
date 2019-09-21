@@ -1,3 +1,17 @@
+<?php
+    require_once 'inc/utils.php';
+
+    // Connect to the database
+    try {
+        $db = new PDO('mysql:host=localhost;dbname=tp_blog;charset=utf8', 'root', 'rboxer',
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            ]
+        );
+    } catch (Exception $e) {
+        die('Error: '.$e->getMessage());
+    }
+?>
 <!doctype html>
 <html lang="fr">
 <head>
@@ -13,48 +27,35 @@
         <h1>Mon blog</h1>
     </header>
 
-    <main class="container">
+        <main class="container">
 
-        <section class="container">
-
-            <?php
-
-            function debug($var) {
-                echo '<pre>' . print_r($var, true) . '</pre>';
-            }
-
-            // Connect to the database
-            try {
-                $db = new PDO('mysql:host=localhost;dbname=project_blog;charset=utf8', 'root', 'rboxer',
-                    [
-                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-                    ]
-                );
-            } catch (Exception $e) {
-                die('Error: '.$e->getMessage());
-            }
-
-            $sql = 'SELECT id, title, content FROM posts';
-            $statement = $db->query($sql);
-
-
-            while ($posts = $statement->fetch()) {
-                ?>
-
-                <div class="card">
-                    <h1>
-                        <?php echo htmlspecialchars($posts['title']); ?>
-                    </h1>
-
-                    <p>
-                        <?php echo htmlspecialchars($posts['content']) ?>
-                    </p>
-                </div>
-
+            <section class="container">
 
                 <?php
-            }
-            ?>
+
+                    $sql = 'SELECT id, title, content, created_at FROM posts';
+                    $statement = $db->query($sql);
+
+                    while ($posts = $statement->fetch()) {
+                        ?>
+
+                        <div class="card">
+                            <h1>
+                                <?php echo htmlspecialchars($posts['title']); ?>
+                                <em><?php echo htmlspecialchars($posts['created_at']); ?></em>
+                            </h1>
+
+                            <p>
+                                <?php echo htmlspecialchars($posts['content']) ?>
+                            </p>
+
+                            <a href="show.php?post=<?php echo intval($posts['id']); ?>">Voir plus</a>
+                        </div>
+
+                        <?php
+                    }
+                ?>
+
         </section>
     </main>
 
