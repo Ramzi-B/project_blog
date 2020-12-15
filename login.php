@@ -26,9 +26,9 @@ if (isset($_SESSION['auth'])) {
 include_once 'inc/utils.php';
 include_once 'inc/DatabaseConnection.php';
 
- /**
-  * Check
-  *****************************************************************************/
+/**
+ * Check
+ *****************************************************************************/
 
 if (isset($_POST) && !empty($_POST)) {
 
@@ -91,6 +91,7 @@ if (isset($_POST) && !empty($_POST)) {
         <?php if (isset($_SESSION['flashbox'])): ?>
             <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
     			<section class="flashbox flashbox-<?= $type; ?>">
+                    <span class="close"></span>
     				<p><?= $message; ?></p>
     			</section>
     		<?php endforeach ?>
@@ -101,7 +102,7 @@ if (isset($_POST) && !empty($_POST)) {
 
             <form action="" method="post">
 
-                <a href="#">Mot de passe oublié</a>
+                <a href="forgottenPassword.php">Mot de passe oublié</a>
 
                 <p id="help-form-text"></p>
 

@@ -91,7 +91,8 @@ if (!empty($_POST)) {
 
             <?php if (isset($_SESSION['flashbox'])): ?>
                 <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
-        			<section class="flashbox flashbox-<?= $type; ?>">
+                    <section class="flashbox flashbox-<?= $type; ?>">
+                        <span class="close"></span>
         				<p><?= $message; ?></p>
         			</section>
         		<?php endforeach ?>
@@ -100,7 +101,7 @@ if (!empty($_POST)) {
 
             <h1>Modifier l'article</h1>
 
-            <form action="" method="post">
+            <form action="" method="POST">
 
                 <input type="hidden" name="postid" value="<?= intval($post->id) ?>">
 

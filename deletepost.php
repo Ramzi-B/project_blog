@@ -33,13 +33,15 @@ include_once 'inc/DatabaseConnection.php';
  * Delete the post and all its related comments
  *******************************************************************************/
 
+// if an article is without comment, it is not deleted.
+
 $sql = 'DELETE posts, comments FROM posts
     JOIN comments ON posts.id = comments.post_id WHERE posts.id = :id';
 
 // $sql = 'DELETE FROM posts WHERE id = :id';
 $statement = getDatabase()->prepare($sql);
-// debug($_GET);
-// debug($statement);
+// dd($_GET);
+// dd($statement);
 // die;
 $statement->bindParam(':id', $_GET['id'], PDO::PARAM_INT);
 $statement->execute();

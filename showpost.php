@@ -145,6 +145,7 @@ if (isset($_POST) && !empty($_POST)) {
         <?php if (isset($_SESSION['flashbox'])): ?>
             <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
     			<section class="flashbox flashbox-<?= $type; ?>">
+                    <span class="close"></span>
     				<p><?= $message; ?></p>
     			</section>
     		<?php endforeach ?>

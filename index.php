@@ -9,7 +9,7 @@ session_start();
 /**
  * Includes files
  ******************************************************************************/
- // define('ROOT_PATH', __DIR__);
+// define('ROOT_PATH', __DIR__);
 
 include_once 'inc/utils.php';
 include_once 'inc/DatabaseConnection.php';
@@ -104,10 +104,11 @@ $lastComments = $result;
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
     <title>Mon blog</title>
-    <link rel="stylesheet" href="css/normalize.css" media="screen, projectionœœ">
+    <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    
     <header>
         <section class="container">
             <div class="header-top">
@@ -134,7 +135,8 @@ $lastComments = $result;
         <!-- Session flash messages -->
         <?php if (isset($_SESSION['flashbox'])): ?>
             <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
-    			<section class="flashbox flashbox-<?= $type; ?>">
+                <section class="flashbox flashbox-<?= $type; ?>">
+                    <span class="close"></span>
     				<p><?= $message; ?></p>
     			</section>
     		<?php endforeach ?>
@@ -162,29 +164,6 @@ $lastComments = $result;
             <?php endif ?>
         </ul>
 
-        <!-- List of categories -->
-        <aside class="categories">
-            <h4>Categories</h4>
-            <ul>
-                <?php foreach ($categories as $category): ?>
-                    <li>
-                        <a href="category.php?id=<?= intval($category->id) ?>">
-                            <?= htmlspecialchars($category->categoryName, ENT_QUOTES, 'UTF-8')?>
-                        </a>
-                    </li>
-                <?php endforeach ?>
-            </ul>
-
-            <h4>les derniers articles</h4>
-            <ul>
-                <li></li>
-            </ul>
-            <h4>les derniers commentaires</h4>
-            <ul>
-                <li></li>
-            </ul>
-        </aside>
-
         <?php
 
         // $config = getConfig('databaseConfig')['database'];
@@ -203,7 +182,7 @@ $lastComments = $result;
                         <h2><?= htmlspecialchars(ucfirst($post->title), ENT_QUOTES, 'UTF-8') ?></h2>
                         <em>Posté par <?= htmlspecialchars($post->author, ENT_QUOTES, 'UTF-8') ?> le <?= $post->created_at ?></em></br>
                         <em>
-                            <span>Categorie:&nbsp</span>
+                            <span>Categorie:&nbsp;</span>
                             <a href="category.php?id=<?= intval($post->category_id) ?>">
                                 <?= htmlspecialchars($post->category, ENT_QUOTES, 'UTF-8') ?>
                             </a>
@@ -220,6 +199,35 @@ $lastComments = $result;
             <?php endforeach ?>
 
         </section>
+
+        <!-- List of categories -->
+        <aside class="categories">
+
+            <h4>Categories</h4>
+        
+            <ul>
+                <?php foreach ($categories as $category): ?>
+                    <li>
+                        <a href="category.php?id=<?= intval($category->id) ?>">
+                            <?= htmlspecialchars($category->categoryName, ENT_QUOTES, 'UTF-8')?>
+                        </a>
+                    </li>
+                <?php endforeach ?>
+            </ul>
+
+            <h4>les derniers articles</h4>
+        
+            <ul>
+                <li></li>
+            </ul>
+        
+            <h4>les derniers commentaires</h4>
+        
+            <ul>
+                <li></li>
+            </ul>
+        
+        </aside>
 
         <div class="clearfix"></div>
 

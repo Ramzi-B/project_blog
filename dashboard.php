@@ -20,15 +20,15 @@ if (!isset($_SESSION['auth'])) {
     exit();
 }
 
-// var_dump(isAuthenticated());
-// !isset($_SESSION['auth']) ? header("location:login.php"):null;
-
 /**
  * Includes files
  ******************************************************************************/
 
 include_once 'inc/utils.php';
 include_once 'inc/DatabaseConnection.php';
+
+// var_dump(isAuthenticated());
+// !isset($_SESSION['auth']) ? header("location:login.php"):null;
 
 /**
  * Pagination
@@ -149,7 +149,7 @@ $totalComments = $result->totalComments;
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
@@ -158,7 +158,7 @@ $totalComments = $result->totalComments;
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
+	<header>
         <section class="container">
             <div class="header-top">
                 <a href="/">Mon blog</a>
@@ -179,6 +179,7 @@ $totalComments = $result->totalComments;
         <?php if (isset($_SESSION['flashbox'])): ?>
             <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
     			<section class="flashbox flashbox-<?= $type; ?>">
+                    <span class="close"></span>
     				<p><?= $message; ?></p>
     			</section>
     		<?php endforeach ?>
@@ -207,9 +208,9 @@ $totalComments = $result->totalComments;
             </table>
 
             <nav>
-                <a class="btn" href="addpost.php">Ajouter un article</a>
-                <a class="btn" href="addauthor.php">Ajouter un auteur</a>
-                <a class="btn" href="addcategory.php">Ajouter une catégorie</a>
+                <a class="btn" href="/addpost.php">Ajouter un article</a>
+                <a class="btn" href="/addauthor.php">Ajouter un auteur</a>
+                <a class="btn" href="/addcategory.php">Ajouter une catégorie</a>
             </nav>
         </section>
 

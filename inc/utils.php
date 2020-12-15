@@ -28,5 +28,5 @@ function checkIntegerRange($int, $min, $max)
 
 function getConfig($fileName)
 {
-    return include ROOT_PATH . "/config/{$fileName}.php";
+    return include ROOT_PATH . "/../config/{$fileName}.php";
 }

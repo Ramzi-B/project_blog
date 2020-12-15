@@ -1,6 +1,12 @@
 <?php
 
 /**
+ * Includes files
+ ******************************************************************************/
+
+include_once 'inc/utils.php';
+
+/**
  * Check if a session is already started if it is not started
  ******************************************************************************/
 
@@ -8,15 +14,36 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-/**
- * Includes files
- ******************************************************************************/
+/** 
+ * Check for empty fields
+ *******************************************************************************/
 
-include_once 'inc/utils.php';
-include_once 'inc/DatabaseConnection.php';
+if (isset($_POST) && !empty($_POST)) {
+    if (empty($_POST['name']) || empty($_POST['email']) ||
+        empty($_POST['message']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
+    {
+        $_SESSION['flashbox']['danger'] = "Vous devez remplir tout les champs requis *";
+    } else {
+        $name = htmlspecialchars($_POST['name']);
+        $email_address = htmlspecialchars($_POST['email']);
+        $website = htmlspecialchars($_POST['website']);
+        $message = htmlspecialchars($_POST['message']);
+        
+        // Create the email
+        $to = 'admin@monblog.com';
+        $email_subject = "Formulaire de contact du site web:\n{$name}";
+        $email_body = "Vous avez reçu un nouveau message.\n\n".
+            "Name: {$name}\n\nEmail: {$email_address}\n\nSite web: {$website}\n\nMessage:\n{$message}"
+        ;    
+        $headers = "From: noreply@monblog.com\n";
+        $headers .= "Reply-To: $email_address";   
 
-// debug($_SERVER);
-// debug($_SESSION);
+        // Send the message
+        mail($to, $email_subject, $email_body, $headers);
+
+        $_SESSION['flashbox']['success'] = 'Votre message a bien été envoyé!';
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -53,15 +80,23 @@ include_once 'inc/DatabaseConnection.php';
     <!-- Main -->
     <main class="container">
 
+        <?php if (isset($_SESSION['flashbox'])): ?>
+            <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
+                <section class="flashbox flashbox-<?= $type; ?>">
+                    <span class="close"></span>
+                    <p><?= $message; ?></p>
+                </section>
+            <?php endforeach ?>
+            <?php unset($_SESSION['flashbox']); ?>
+        <?php endif ?>
+
         <h1>Contact</h1>
 
         <section class="">
 
             <p id="help-form-text"></p>
 
-            <form action="" method="post">
-
-                <input type="hidden" name="post_id" value="<?= intval($_GET['id']) ?>">
+            <form action="" method="POST">
 
                 <label for="name">Name</label>
                 <input type="text" id="name" name="name" placeholder="Nom *" data-help="Votre Nom">
@@ -72,8 +107,8 @@ include_once 'inc/DatabaseConnection.php';
                 <label for="website">Site web</label>
                 <input type="url" id="website" name="website" placeholder="Site Web" data-help="Votre Site Web">
 
-                <label for="content">Commentaire</label>
-                <textarea name="content" id="content" cols="30" rows="10" placeholder="Votre message *" data-help="Votre Commentaire"></textarea>
+                <label for="message">Message</label>
+                <textarea name="message" id="message" cols="30" rows="10" placeholder="Votre message *" data-help="Votre Commentaire"></textarea>
 
                 <input type="submit" value="Envoyer">
 

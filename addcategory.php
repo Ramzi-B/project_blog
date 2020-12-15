@@ -32,7 +32,7 @@ include 'inc/DatabaseConnection.php';
 // debug($_SESSION);
 
 /**
- * Check
+ * Check for empty fields
  *******************************************************************************/
 
 if (!empty($_POST)) {
@@ -89,7 +89,8 @@ if (!empty($_POST)) {
         <!--  -->
         <?php if (isset($_SESSION['flashbox'])): ?>
             <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
-    			<section class="flashbox flashbox-<?= $type; ?>">
+                <section class="flashbox flashbox-<?= $type; ?>">
+                    <span class="close"></span>
     				<p><?= $message; ?></p>
     			</section>
     		<?php endforeach ?>
