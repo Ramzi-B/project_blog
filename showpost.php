@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * Includes files
+ ******************************************************************************/
+
+include_once 'inc/utils.php';
+include_once 'inc/DatabaseConnection.php';
+
+/**
  * Check if a session is already started if it is not started
  *******************************************************************************/
 
@@ -8,21 +15,13 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-/**
- * Includes files :
- *     _ Database connection
- *     _ Debug
- *******************************************************************************/
-
-include_once 'inc/utils.php';
-include_once 'inc/DatabaseConnection.php';
-
 // debug($_SERVER);
 // debug($_SESSION);
 
 /**
  * Get all posts
  *******************************************************************************/
+
 $sql = 'SELECT posts.id, title, content, author_id, category_id, created_at, authors.authorName, categories.categoryName FROM posts
     INNER JOIN authors ON posts.author_id = authors.id
     INNER JOIN categories ON posts.category_id = categories.id
@@ -30,7 +29,6 @@ $sql = 'SELECT posts.id, title, content, author_id, category_id, created_at, aut
 ';
 $statement = getDatabase()->prepare($sql);
 $statement->bindParam(':id',  $_GET['id'], PDO::PARAM_INT);
-// $statement->execute([intval($_GET['id'])]);
 $statement->execute();
 $post = $statement->fetch(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -72,12 +70,7 @@ if (isset($_POST) && !empty($_POST)) {
 
     if (empty($_POST['name']) || empty($_POST['content']) || empty($_POST['email'])) {
         $_SESSION['flashbox']['danger'] = "Vous devez remplir tout les champs requis *";
-
     } else {
-
-// if (!empty($_POST['name']) && !empty($_POST['content']) && !empty($_POST['email']) && !empty($_POST['website'])) {
-
-        // $sql = 'INSERT INTO comments(comments.name, content, email, website, post_id, created_at) VALUES(?, ?, ?, ?, ?, NOW())';
         $sql = 'INSERT INTO comments(comments.name, content, email, website, post_id, created_at)
                 VALUES(:name, :content, :email, :website, :post_id, NOW())
         ';
@@ -88,8 +81,8 @@ if (isset($_POST) && !empty($_POST)) {
         $statement->bindParam(':email', $_POST['email'], PDO::PARAM_STR);
         $statement->bindParam(':website', $_POST['website'], PDO::PARAM_STR);
         $statement->bindParam(':post_id', $_POST['post_id'], PDO::PARAM_INT);
-        // $statement->execute([$_POST['name'], $_POST['content'], $_POST['email'], $_POST['website'], $_POST['post_id']]);
         $statement->execute();
+        
         $_SESSION['flashbox']['success'] = 'Votre commentaire a bien été ajouté!';
 
         header('Location: showpost.php?id=' . intval($_POST['post_id']));
@@ -105,8 +98,10 @@ if (isset($_POST) && !empty($_POST)) {
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
     <title><?= $post->title ?></title>
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
@@ -115,14 +110,13 @@ if (isset($_POST) && !empty($_POST)) {
             <div class="header-top">
                 <a href="/">Mon blog</a>
                 <nav>
-                    <?php if (isset($_SESSION['auth'])): ?>
-                        <a href="index.php">Home</a>
-                        <a href="dashboard.php">Dashboard</a>
-                        <a href="logout.php">Logout</a>
+                    <a href="/"><i class="fas fa-home"></i>&nbsp;Home</a>
+                    <a href="/contact.php"><i class="fas fa-envelope"></i>&nbsp;Contact</a>
+                    <?php if (isAuthenticated()): ?>
+                        <a href="/dashboard.php"><i class="fas fa-toolbox"></i>&nbsp;Dashboard</a>
+                        <a href="/logout.php"><i class="fas fa-user"></i>&nbspLogout</a>
                     <?php else: ?>
-                        <a href="index.php">Home</a>
-                        <a href="contact.php">Contact</a>
-                        <a href="login.php">Login</a>
+                        <a href="/login.php"><i class="fas fa-user"></i>&nbspLogin</a>
                     <?php endif ?>
                 </nav>
             </div>
@@ -132,13 +126,13 @@ if (isset($_POST) && !empty($_POST)) {
     <!-- Main -->
     <main class="container">
 
-        <h1><?= htmlspecialchars(ucfirst($post->title)) ?></h1>
+        <h1><?= htmlspecialchars(ucfirst($post->title), ENT_QUOTES, 'UTF-8') ?></h1>
 
         <em>
-            posté par <?= htmlspecialchars($post->authorName) ?> le <?= $post->created_at ?>
+            posté par <?= htmlspecialchars(ucfirst($post->authorName), ENT_QUOTES, 'UTF-8') ?> le <?= $post->created_at ?>
             Categorie&nbsp:
-            <a href="category.php?id=<?= intval($post->category_id) ?>">
-                &nbsp<?= htmlspecialchars($post->categoryName, ENT_QUOTES, 'UTF-8') ?>
+            <a href="/category.php?id=<?= intval($post->category_id) ?>">
+                &nbsp<?= htmlspecialchars(ucfirst($post->categoryName), ENT_QUOTES, 'UTF-8') ?>
             </a>
         </em>
 
@@ -154,11 +148,11 @@ if (isset($_POST) && !empty($_POST)) {
 
         <nav>
             <?php if (isset($_SESSION['auth'])): ?>
-                <a class="btn" href="editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
-                <a class="btn" href="deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a>
+                <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
+                <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a>
             <?php endif ?>
         </nav>
-        <p><?= nl2br(htmlspecialchars($post->content)) ?></p>
+        <p><?= nl2br(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8')) ?></p>
 
 
         <h3>Les derniers commentaires</h3>
@@ -167,8 +161,8 @@ if (isset($_POST) && !empty($_POST)) {
 
         <?php foreach ($comments as $comment): ?>
             <article class="card">
-                <p><?= htmlspecialchars($comment->content) ?></p>
-                <em>posté par <?= htmlspecialchars(ucfirst($comment->name)) ?> le <?= $comment->created_at ?></em>
+                <p><?= htmlspecialchars($comment->content, ENT_QUOTES, 'UTF-8') ?></p>
+                <em>posté par <?= htmlspecialchars(ucfirst($comment->name), ENT_QUOTES, 'UTF-8') ?> le <?= $comment->created_at ?></em>
             </article>
         <?php endforeach ?>
 
@@ -189,7 +183,7 @@ if (isset($_POST) && !empty($_POST)) {
             <input type="email" id="email" name="email" placeholder="Email *" data-help="Votre Email">
 
             <label for="website">Site web</label>
-            <input type="url" id="website" name="website" placeholder="Site Web" data-help="Votre Site Web">
+            <input type="url" id="website" name="website" placeholder="http://votreSite.com" data-help="Votre Site Web">
 
             <label for="content">Commentaire</label>
             <textarea name="content" id="content" cols="30" rows="10" placeholder="Commentaire *" data-help="Votre Commentaire"></textarea>

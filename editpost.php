@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * Includes files
+ ******************************************************************************/
+
+include_once 'inc/utils.php';
+include_once 'inc/DatabaseConnection.php';
+
+/**
  * Check if a session is already started if it is not started
  ******************************************************************************/
 
@@ -13,21 +20,12 @@ if (session_status() == PHP_SESSION_NONE) {
  * if he is not redirected to the index page
  *******************************************************************************/
 
-if (!isset($_SESSION['auth'])) {
+if (!isAuthenticated()) {
     $_SESSION['flashbox']['danger'] = "Vous n'avez pas le droit d'accéder à cette page!";
     http_response_code(301);
     header('Location: /');
     exit();
 }
-
-/**
- * Includes files :
- * _ Database connection
- * _ Utils
- ******************************************************************************/
-
-include_once 'inc/utils.php';
-include_once 'inc/DatabaseConnection.php';
 
 /**
  * Get the post to edit
@@ -71,8 +69,10 @@ if (!empty($_POST)) {
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
         <title>Modifier l'article</title>
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="css/style.css">
+        <!-- Font Awesome CDN -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
+        <link rel="stylesheet" href="/css/normalize.css">
+        <link rel="stylesheet" href="/css/style.css">
     </head>
     <body>
 
@@ -81,7 +81,14 @@ if (!empty($_POST)) {
                 <div class="header-top">
                     <a href="/">Mon blog</a>
                     <nav>
-                        <a href="dashboard.php">Dashboard</a>
+                        <a href="/"><i class="fas fa-home"></i>&nbsp;Home</a>
+                        <a href="/contact.php"><i class="fas fa-envelope"></i>&nbsp;Contact</a>
+                        <?php if (isAuthenticated()): ?>
+                            <a href="/dashboard.php"><i class="fas fa-toolbox"></i>&nbsp;Dashboard</a>
+                            <a href="/logout.php"><i class="fas fa-user"></i>&nbspLogout</a>
+                        <?php else: ?>
+                            <a href="/login.php"><i class="fas fa-user"></i>&nbspLogin</a>
+                        <?php endif ?>
                     </nav>
                 </div>
             </section>

@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * Includes files
+ *******************************************************************************/
+
+include_once 'inc/utils.php';
+include_once 'inc/DatabaseConnection.php';
+
+/**
  * Check if a session is already started if it is not started
  ******************************************************************************/
 
@@ -13,7 +20,7 @@ if (session_status() == PHP_SESSION_NONE) {
  * if he is not redirected to the index page
  *******************************************************************************/
 
-if (!isset($_SESSION['auth'])) {
+if (!isAuthenticated()) {
     $_SESSION['flashbox']['danger'] = "Vous n'avez pas le droit d'accéder à cette page!";
     http_response_code(301);
     header('Location: /');
@@ -21,19 +28,8 @@ if (!isset($_SESSION['auth'])) {
 }
 
 /**
- * Includes files :
- * _ Database connection
- * _ Utils
- *******************************************************************************/
-
-include_once 'inc/utils.php';
-include_once 'inc/DatabaseConnection.php';
-
-/**
  * Delete the post and all its related comments
  *******************************************************************************/
-
-// if an article is without comment, it is not deleted.
 
 $sql = 'DELETE posts, comments FROM posts
     JOIN comments ON posts.id = comments.post_id WHERE posts.id = :id';
