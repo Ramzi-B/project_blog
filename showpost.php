@@ -169,7 +169,7 @@ if (isset($_POST) && !empty($_POST)) {
 
         <h3>Les derniers commentaires</h3>
 
-        <p>Il y a <?= $totalPostComments ?> commentaire(s)</p>
+        <p class="total-comments"><?= $totalPostComments ?>&nbsp;<i class="fas fa-comment-alt"></i></p>
 
         <?php foreach ($comments as $comment): ?>
             <article class="card">

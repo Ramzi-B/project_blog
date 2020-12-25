@@ -163,7 +163,7 @@ $totalComments = $result->totalComments;
                 <nav>
                     <a href="/index.php"><i class="fas fa-home"></i>&nbsp;Home</a>
                     <a href="/contact.php"><i class="fas fa-envelope"></i>&nbsp;Contact</a>                    
-                    <a href="/dashboard.php"><i class="fas fa-toolbox"></i>&nbsp;Dashboard</a>                    
+                    <a href="/dashboard.php"><i class="fas fa-tachometer-alt"></i>&nbsp;Dashboard</a>                
                     <a href="/logout.php"><i class="fas fa-user"></i>&nbsp;Logout</a>
                 </nav>
             </div>
