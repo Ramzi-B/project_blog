@@ -22,13 +22,19 @@ if (session_status() == PHP_SESSION_NONE) {
  * Get all posts
  *******************************************************************************/
 
-$sql = 'SELECT posts.id, title, content, author_id, category_id, created_at, authors.authorName, categories.categoryName FROM posts
-    INNER JOIN authors ON posts.author_id = authors.id
-    INNER JOIN categories ON posts.category_id = categories.id
+$sql = 'SELECT posts.id, posts.title, posts.content,
+        posts.author_id, posts.category_id, posts.created_at,
+        authors.authorName,
+        categories.categoryName
+    FROM posts
+    INNER JOIN authors
+        ON posts.author_id = authors.id
+    INNER JOIN categories 
+        ON posts.category_id = categories.id
     WHERE posts.id = :id
 ';
 $statement = getDatabase()->prepare($sql);
-$statement->bindParam(':id',  $_GET['id'], PDO::PARAM_INT);
+$statement->bindParam(':id', $_GET['id'], PDO::PARAM_INT);
 $statement->execute();
 $post = $statement->fetch(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -39,14 +45,19 @@ $statement->closeCursor();
  * Get all comments that corespond to the post
  *******************************************************************************/
 
-$sql = 'SELECT * FROM comments WHERE post_id = :id';
+$sql = 'SELECT comments.id, comments.name, comments.content,
+        comments.created_at, comments.updated_at, comments.post_id, comments.email,
+        comments.ip, comments.url, comments.agent, comments.website
+    FROM comments
+    WHERE comments.post_id = :id
+';
 $statement = getDatabase()->prepare($sql);
 $statement->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
 $statement->execute();
 $comments = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
 
-// debug($comments);
+// dd($comments);
 
 /**
  * Count all comments per post
@@ -71,8 +82,8 @@ if (isset($_POST) && !empty($_POST)) {
     if (empty($_POST['name']) || empty($_POST['content']) || empty($_POST['email'])) {
         $_SESSION['flashbox']['danger'] = "Vous devez remplir tout les champs requis *";
     } else {
-        $sql = 'INSERT INTO comments(comments.name, content, email, website, post_id, created_at)
-                VALUES(:name, :content, :email, :website, :post_id, NOW())
+        $sql = 'INSERT INTO comments(comments.name, comments.content, comments.email, comments.website, comments.post_id, comments.created_at)
+            VALUES(:name, :content, :email, :website, :post_id, NOW())
         ';
         $statement = getDatabase()->prepare($sql);
         // Binds parameters to variables
@@ -85,7 +96,7 @@ if (isset($_POST) && !empty($_POST)) {
         
         $_SESSION['flashbox']['success'] = 'Votre commentaire a bien été ajouté!';
 
-        header('Location: showpost.php?id=' . intval($_POST['post_id']));
+        header('Location: /showpost.php?id=' . intval($_POST['post_id']));
         exit();
     }
 }
@@ -114,9 +125,9 @@ if (isset($_POST) && !empty($_POST)) {
                     <a href="/contact.php"><i class="fas fa-envelope"></i>&nbsp;Contact</a>
                     <?php if (isAuthenticated()): ?>
                         <a href="/dashboard.php"><i class="fas fa-toolbox"></i>&nbsp;Dashboard</a>
-                        <a href="/logout.php"><i class="fas fa-user"></i>&nbspLogout</a>
+                        <a href="/logout.php"><i class="fas fa-user"></i>&nbsp;Logout</a>
                     <?php else: ?>
-                        <a href="/login.php"><i class="fas fa-user"></i>&nbspLogin</a>
+                        <a href="/login.php"><i class="fas fa-user"></i>&nbsp;Login</a>
                     <?php endif ?>
                 </nav>
             </div>
@@ -129,10 +140,10 @@ if (isset($_POST) && !empty($_POST)) {
         <h1><?= htmlspecialchars(ucfirst($post->title), ENT_QUOTES, 'UTF-8') ?></h1>
 
         <em>
-            posté par <?= htmlspecialchars(ucfirst($post->authorName), ENT_QUOTES, 'UTF-8') ?> le <?= $post->created_at ?>
-            Categorie&nbsp:
+            Posté par <?= htmlspecialchars(ucfirst($post->authorName), ENT_QUOTES, 'UTF-8') ?> le <?= $post->created_at ?>
+            Categorie&nbsp;:
             <a href="/category.php?id=<?= intval($post->category_id) ?>">
-                &nbsp<?= htmlspecialchars(ucfirst($post->categoryName), ENT_QUOTES, 'UTF-8') ?>
+                &nbsp;<?= htmlspecialchars(ucfirst($post->categoryName), ENT_QUOTES, 'UTF-8') ?>
             </a>
         </em>
 
@@ -152,6 +163,7 @@ if (isset($_POST) && !empty($_POST)) {
                 <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a>
             <?php endif ?>
         </nav>
+
         <p><?= nl2br(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8')) ?></p>
 
 

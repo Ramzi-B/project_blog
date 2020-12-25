@@ -47,19 +47,23 @@ $startCount = ($currentPage - 1) * $postPerPage;
  * Get all posts
  ******************************************************************************/
 
-$sql = 'SELECT
-            posts.id, title, content, author_id, category_id, created_at,
+$sql = 'SELECT posts.id, posts.title, posts.content, posts.author_id,
+            posts.category_id, posts.created_at, posts.published,
             authors.authorName AS author,
             categories.categoryName AS category
         FROM posts
-        JOIN authors ON posts.author_id = authors.id
-        JOIN categories ON posts.category_id = categories.id
+        JOIN authors
+            ON posts.author_id = authors.id
+        JOIN categories 
+            ON posts.category_id = categories.id
         ORDER BY created_at DESC LIMIT
 '. $startCount . ',' . $postPerPage;
 
 $statement = getDatabase()->query($sql);
 $posts = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
+
+// dd($posts);
 
 /**
  * Get all categories
@@ -74,7 +78,10 @@ $statement->closeCursor();
  * Get last comments
  ******************************************************************************/
 
-$sql = 'SELECT comments.content, name, created_at FROM comments ORDER BY created_at DESC LIMIT 5';
+$sql = 'SELECT comments.content, comments.name, comments.created_at 
+    FROM comments 
+    ORDER BY created_at DESC LIMIT 5
+';
 $statement = getDatabase()->query($sql);
 $result = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -119,9 +126,9 @@ $lastComments = $result;
                     <a href="/contact.php"><i class="fas fa-envelope"></i>&nbsp;Contact</a>
                     <?php if (isAuthenticated()): ?>
                         <a href="/dashboard.php"><i class="fas fa-toolbox"></i>&nbsp;Dashboard</a>
-                        <a href="/logout.php"><i class="fas fa-user"></i>&nbspLogout</a>
+                        <a href="/logout.php"><i class="fas fa-user"></i>&nbsp;Logout</a>
                     <?php else: ?>
-                        <a href="/login.php"><i class="fas fa-user"></i>&nbspLogin</a>
+                        <a href="/login.php"><i class="fas fa-user"></i>&nbsp;Login</a>
                     <?php endif ?>
                 </nav>
             </div>
@@ -165,14 +172,7 @@ $lastComments = $result;
             <?php endif ?>
         </ul>
 
-        <?php
-
-        // $config = getConfig('databaseConfig')['database'];
-        // dd($config);
-        // dd($config['dsn'] .';dbname='. $config['name'] .','. $config['username'] .','. $config['password']);
-
-         ?>
-
+        <!-- List of posts -->
         <section class="post-content">
 
             <?php foreach ($posts as $post): ?>
@@ -191,7 +191,7 @@ $lastComments = $result;
                     </section>
 
                     <section class="card__body">
-                        <p><?= nl2br(substr(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8'), 0, 100)) ?>&nbsp...</p>
+                        <p><?= nl2br(substr(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8'), 0, 100)) ?>&nbsp;...</p>
                         <p><a class="btn" href="/showpost.php?id=<?= intval($post->id) ?>">Voir plus</a></p>
                     </section>
 

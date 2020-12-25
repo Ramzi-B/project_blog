@@ -80,9 +80,9 @@ if (!empty($_POST)) {
                     <a href="/contact.php"><i class="fas fa-envelope"></i>&nbsp;Contact</a>
                     <?php if (isAuthenticated()): ?>
                         <a href="/dashboard.php"><i class="fas fa-toolbox"></i>&nbsp;Dashboard</a>
-                        <a href="/logout.php"><i class="fas fa-user"></i>&nbspLogout</a>
+                        <a href="/logout.php"><i class="fas fa-user"></i>&nbsp;Logout</a>
                     <?php else: ?>
-                        <a href="/login.php"><i class="fas fa-user"></i>&nbspLogin</a>
+                        <a href="/login.php"><i class="fas fa-user"></i>&nbsp;Login</a>
                     <?php endif ?>
                 </nav>
             </div>

@@ -17,7 +17,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 /**
  * Check if the admin user is logged in
- * if he is not redirected to the index page
+ * if he's not redirected to the index page
  *******************************************************************************/
 
 if (!isAuthenticated()) {
@@ -31,10 +31,8 @@ if (!isAuthenticated()) {
  * Delete the post and all its related comments
  *******************************************************************************/
 
-$sql = 'DELETE posts, comments FROM posts
-    JOIN comments ON posts.id = comments.post_id WHERE posts.id = :id';
+$sql = 'DELETE posts FROM posts WHERE posts.id = :id';
 
-// $sql = 'DELETE FROM posts WHERE id = :id';
 $statement = getDatabase()->prepare($sql);
 // dd($_GET);
 // dd($statement);

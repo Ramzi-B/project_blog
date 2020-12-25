@@ -30,7 +30,11 @@ if (!isAuthenticated()) {
 /**
  * Get the post to edit
  ******************************************************************************/
-$sql = 'SELECT * FROM posts WHERE posts.id = :id';
+$sql = 'SELECT posts.id, posts.title, posts.content, posts.author_id,
+    posts.category_id, posts.created_at, posts.published
+    FROM posts
+    WHERE posts.id = :id
+';
 $statement = getDatabase()->prepare($sql);
 $statement->bindParam(':id', $_GET['id'], PDO::PARAM_INT);
 $statement->execute();
@@ -43,7 +47,7 @@ $statement->closeCursor();
 
 if (!empty($_POST)) {
     // $sql = 'UPDATE posts SET title = ?, content = ?, modified_at = NOW() WHERE id = ?';
-    $sql = 'UPDATE posts SET title = :title, content = :content, modified_at = NOW() WHERE id = :id';
+    $sql = 'UPDATE posts SET title = :title, content = :content, updated_at = NOW() WHERE id = :id';
     $statement = getDatabase()->prepare($sql);
     $statement->bindParam(':title', $_POST['title'], PDO::PARAM_STR);
     $statement->bindParam(':content', $_POST['content'], PDO::PARAM_STR);
@@ -58,7 +62,7 @@ if (!empty($_POST)) {
 }
 
 // debug($_SESSION);
-// debug($_GET);
+dd($_GET);
 
 ?>
 <!DOCTYPE html>
@@ -85,9 +89,9 @@ if (!empty($_POST)) {
                         <a href="/contact.php"><i class="fas fa-envelope"></i>&nbsp;Contact</a>
                         <?php if (isAuthenticated()): ?>
                             <a href="/dashboard.php"><i class="fas fa-toolbox"></i>&nbsp;Dashboard</a>
-                            <a href="/logout.php"><i class="fas fa-user"></i>&nbspLogout</a>
+                            <a href="/logout.php"><i class="fas fa-user"></i>&nbsp;Logout</a>
                         <?php else: ?>
-                            <a href="/login.php"><i class="fas fa-user"></i>&nbspLogin</a>
+                            <a href="/login.php"><i class="fas fa-user"></i>&nbsp;Login</a>
                         <?php endif ?>
                     </nav>
                 </div>
@@ -113,12 +117,13 @@ if (!empty($_POST)) {
                 <input type="hidden" name="postid" value="<?= intval($post->id) ?>">
 
                 <label for="title">Titre</label>
-                <input type="text" id="title" name="title" value="<?= htmlspecialchars($post->title) ?>">
+                <input type="text" id="title" name="title" value="<?= htmlspecialchars($post->title, ENT_QUOTES, 'UTF-8') ?>">
 
                 <label for="content">Article</label>
-                <textarea id="content" name="content" rows="15"><?= htmlspecialchars($post->content) ?></textarea>
+                <textarea id="content" name="content" rows="15"><?= htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8') ?></textarea>
 
                 <input type="submit" value="Mettre à jour">
+                <!-- <button type="submit" class="btn">Mettre à jour</button> -->
                 <a class="btn" href="/dashboard.php">Annuler</a>
 
             </form>

@@ -252,7 +252,7 @@ $totalComments = $result->totalComments;
                     <em>
                         Categorie&nbsp;:
                         <a href="/category.php?id=<?= intval($post->category_id) ?>">
-                            &nbsp<?= htmlspecialchars($post->categoryName, ENT_QUOTES, 'UTF-8') ?>
+                            &nbsp;<?= htmlspecialchars($post->categoryName, ENT_QUOTES, 'UTF-8') ?>
                         </a>
                     </em>
 
@@ -291,7 +291,7 @@ $totalComments = $result->totalComments;
                         <th>Titres</th>
                         <th>Crée le</th>
                         <th>Autheurs</th>
-                        <th>&nbsp</th>
+                        <th>&nbsp;</th>
                     </tr>
                 </thead>
 
