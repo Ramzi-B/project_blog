@@ -261,7 +261,8 @@ $totalComments = $result->totalComments;
                     <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
                     <!-- <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a> -->
 
-                    <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST" style="display:inline;">
+                    <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST"
+                        onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
                         <input type="hidden" name="id" value="<?= intval($post->id) ?>">
                         <input class="btn" type="submit" value="Suprimer">
                         <!-- <button class="btn" type="submit">Supprimer</button> -->

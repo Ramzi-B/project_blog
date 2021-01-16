@@ -162,7 +162,8 @@ if (isset($_POST) && !empty($_POST)) {
         <?php if (isset($_SESSION['auth'])): ?>
             <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
             <!-- <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a> -->
-            <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST" style="display:inline;">
+            <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST"
+                onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
                 <input type="hidden" name="id" value="<?= intval($post->id) ?>">
                 <input type="submit" value="Suprimer">
             </form>
