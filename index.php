@@ -11,7 +11,9 @@ include_once 'inc/DatabaseConnection.php';
  * Start session
  ******************************************************************************/
 
-session_start();
+session_start([ 'cookie_httponly' => true, 'cookie_secure' => true ]);
+
+// dd($_SESSION);
 
 /**
  * Pagination
@@ -48,7 +50,7 @@ $startCount = ($currentPage - 1) * $postPerPage;
  ******************************************************************************/
 
 $sql = 'SELECT posts.id, posts.title, posts.content, posts.author_id,
-            posts.category_id, posts.created_at, posts.published,
+            posts.category_id, posts.created, posts.published,
             authors.authorName AS author,
             categories.categoryName AS category
         FROM posts
@@ -56,7 +58,7 @@ $sql = 'SELECT posts.id, posts.title, posts.content, posts.author_id,
             ON posts.author_id = authors.id
         JOIN categories 
             ON posts.category_id = categories.id
-        ORDER BY created_at DESC LIMIT
+        ORDER BY created DESC LIMIT
 '. $startCount . ',' . $postPerPage;
 
 $statement = getDatabase()->query($sql);
@@ -78,9 +80,9 @@ $statement->closeCursor();
  * Get last comments
  ******************************************************************************/
 
-$sql = 'SELECT comments.content, comments.name, comments.created_at 
+$sql = 'SELECT comments.content, comments.name, comments.created 
     FROM comments 
-    ORDER BY created_at DESC LIMIT 5
+    ORDER BY created DESC LIMIT 5
 ';
 $statement = getDatabase()->query($sql);
 $result = $statement->fetchAll(PDO::FETCH_OBJ);
@@ -181,7 +183,7 @@ $lastComments = $result;
 
                     <section class="card__header">
                         <h2><?= htmlspecialchars(ucfirst($post->title), ENT_QUOTES, 'UTF-8') ?></h2>
-                        <em>Posté par <?= htmlspecialchars(ucfirst($post->author), ENT_QUOTES, 'UTF-8') ?> le <?= $post->created_at ?></em></br>
+                        <em>Posté par <?= htmlspecialchars(ucfirst($post->author), ENT_QUOTES, 'UTF-8') ?> le <?= $post->created ?></em></br>
                         <em>
                             <span>Categorie:&nbsp;</span>
                             <a href="/category.php?id=<?= intval($post->category_id) ?>">

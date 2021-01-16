@@ -78,13 +78,13 @@ $startCount = ($currentPage - 1) * $postPerPage;
  ******************************************************************************/
 
 $sql = 'SELECT
-            posts.id, title, content, author_id, category_id, created_at,
+            posts.id, title, content, author_id, category_id, created,
             authors.authorName,
             categories.categoryName
         FROM posts
         INNER JOIN authors ON posts.author_id = authors.id
         INNER JOIN categories ON posts.category_id = categories.id
-        ORDER BY created_at DESC LIMIT
+        ORDER BY created DESC LIMIT
 '. $startCount . ',' . $postPerPage;
 $statement = getDatabase()->query($sql);
 $posts = $statement->fetchAll(PDO::FETCH_OBJ);
@@ -247,7 +247,7 @@ $totalComments = $result->totalComments;
                         <a href="/showpost.php?id=<?= intval($post->id) ?>"><?= htmlspecialchars($post->title, ENT_QUOTES, 'UTF-8') ?></a>
                     </h2>
 
-                    <em>Posté par <?= htmlspecialchars($post->authorName, ENT_QUOTES, 'UTF-8') ?> le <?= $post->created_at ?></em></br>
+                    <em>Posté par <?= htmlspecialchars($post->authorName, ENT_QUOTES, 'UTF-8') ?> le <?= $post->created ?></em></br>
 
                     <em>
                         Categorie&nbsp;:
@@ -259,7 +259,13 @@ $totalComments = $result->totalComments;
                     <p><?= nl2br(substr(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8'), 0, 100)) ?>&nbsp;...</p>
 
                     <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
-                    <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a>
+                    <!-- <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a> -->
+
+                    <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST" style="display:inline;">
+                        <input type="hidden" name="id" value="<?= intval($post->id) ?>">
+                        <input class="btn" type="submit" value="Suprimer">
+                        <!-- <button class="btn" type="submit">Supprimer</button> -->
+                    </form>
 
                 </article>
 
@@ -298,7 +304,7 @@ $totalComments = $result->totalComments;
                 <tbody>
                     <tr>
                         <td><a href="/showpost.php?id=<?= intval($post->id) ?>"><?= htmlspecialchars($post->title, ENT_QUOTES, 'UTF-8') ?></a></td>
-                        <td><?= $post->created_at ?></td>
+                        <td><?= $post->created ?></td>
                         <td><?= htmlspecialchars($post->authorName, ENT_QUOTES, 'UTF-8') ?></td>
                         <td>
                             <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>

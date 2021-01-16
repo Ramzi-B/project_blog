@@ -31,7 +31,7 @@ if (!isAuthenticated()) {
  * Get the post to edit
  ******************************************************************************/
 $sql = 'SELECT posts.id, posts.title, posts.content, posts.author_id,
-    posts.category_id, posts.created_at, posts.published
+    posts.category_id, posts.created, posts.updated, posts.published
     FROM posts
     WHERE posts.id = :id
 ';
@@ -42,12 +42,12 @@ $post = $statement->fetch(PDO::FETCH_OBJ);
 $statement->closeCursor();
 
 /**
- * Check
+ * Check for empty fields
  ******************************************************************************/
 
 if (!empty($_POST)) {
     // $sql = 'UPDATE posts SET title = ?, content = ?, modified_at = NOW() WHERE id = ?';
-    $sql = 'UPDATE posts SET title = :title, content = :content, updated_at = NOW() WHERE id = :id';
+    $sql = 'UPDATE posts SET title = :title, content = :content, updated = NOW() WHERE id = :id';
     $statement = getDatabase()->prepare($sql);
     $statement->bindParam(':title', $_POST['title'], PDO::PARAM_STR);
     $statement->bindParam(':content', $_POST['content'], PDO::PARAM_STR);

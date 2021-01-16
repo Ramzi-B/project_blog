@@ -47,7 +47,7 @@ $categories = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
 
 /**
- * Check
+ * Check for empty fields
  *******************************************************************************/
 
 if (!empty($_POST)) {

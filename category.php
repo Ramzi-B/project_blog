@@ -37,13 +37,13 @@ $statement->closeCursor();
  ******************************************************************************/
 
 $sql = 'SELECT
-            posts.id, title, content, author_id, category_id, created_at,
+            posts.id, title, content, author_id, category_id, created,
             authors.authorName,
             categories.categoryName
     FROM posts
     INNER JOIN authors ON posts.author_id = authors.id
     INNER JOIN categories ON posts.category_id = categories.id
-    WHERE posts.category_id = :id ORDER BY created_at
+    WHERE posts.category_id = :id ORDER BY created
 ';
 $statement = getDatabase()->prepare($sql);
 $statement->bindParam(':id', $_GET['id'], PDO::PARAM_INT);
@@ -107,7 +107,7 @@ $statement->closeCursor();
 
                     <em>Categorie: <a href="/category.php?id=<?= intval($post->category_id) ?>"><?= htmlspecialchars($post->categoryName, ENT_QUOTES, 'UTF-8') ?></a></em></br>
 
-                    <em>Posté par <?= htmlspecialchars($post->authorName, ENT_QUOTES, 'UTF-8') ?> le <?= $post->created_at ?></em>
+                    <em>Posté par <?= htmlspecialchars($post->authorName, ENT_QUOTES, 'UTF-8') ?> le <?= $post->created ?></em>
 
                     <p><?= nl2br(substr(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8'), 0, 100)) ?>&nbsp...</p>
 
