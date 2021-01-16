@@ -23,7 +23,7 @@ if (session_status() == PHP_SESSION_NONE) {
  *******************************************************************************/
 
 $sql = 'SELECT posts.id, posts.title, posts.content,
-        posts.author_id, posts.category_id, posts.created_at,
+        posts.author_id, posts.category_id, posts.created,
         authors.authorName,
         categories.categoryName
     FROM posts
@@ -46,7 +46,7 @@ $statement->closeCursor();
  *******************************************************************************/
 
 $sql = 'SELECT comments.id, comments.name, comments.content,
-        comments.created_at, comments.updated_at, comments.post_id, comments.email,
+        comments.created, comments.updated, comments.post_id, comments.email,
         comments.ip, comments.url, comments.agent, comments.website
     FROM comments
     WHERE comments.post_id = :id
@@ -74,7 +74,7 @@ $totalPostComments = $result->totalComments;
 // debug($totalComments);
 
 /**
- * Check
+ * Check for empty fields
  *******************************************************************************/
 
 if (isset($_POST) && !empty($_POST)) {
@@ -82,7 +82,8 @@ if (isset($_POST) && !empty($_POST)) {
     if (empty($_POST['name']) || empty($_POST['content']) || empty($_POST['email'])) {
         $_SESSION['flashbox']['danger'] = "Vous devez remplir tout les champs requis *";
     } else {
-        $sql = 'INSERT INTO comments(comments.name, comments.content, comments.email, comments.website, comments.post_id, comments.created_at)
+        $sql = 'INSERT INTO comments(comments.name, comments.content, comments.email,
+                comments.website, comments.post_id, comments.created)
             VALUES(:name, :content, :email, :website, :post_id, NOW())
         ';
         $statement = getDatabase()->prepare($sql);
@@ -140,7 +141,7 @@ if (isset($_POST) && !empty($_POST)) {
         <h1><?= htmlspecialchars(ucfirst($post->title), ENT_QUOTES, 'UTF-8') ?></h1>
 
         <em>
-            Posté par <?= htmlspecialchars(ucfirst($post->authorName), ENT_QUOTES, 'UTF-8') ?> le <?= $post->created_at ?>
+            Posté par <?= htmlspecialchars(ucfirst($post->authorName), ENT_QUOTES, 'UTF-8') ?> le <?= $post->created ?>
             Categorie&nbsp;:
             <a href="/category.php?id=<?= intval($post->category_id) ?>">
                 &nbsp;<?= htmlspecialchars(ucfirst($post->categoryName), ENT_QUOTES, 'UTF-8') ?>
@@ -157,24 +158,29 @@ if (isset($_POST) && !empty($_POST)) {
     		<?php unset($_SESSION['flashbox']); ?>
     	<?php endif ?>
 
-        <nav>
-            <?php if (isset($_SESSION['auth'])): ?>
-                <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
-                <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a>
-            <?php endif ?>
-        </nav>
+        
+        <?php if (isset($_SESSION['auth'])): ?>
+            <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
+            <!-- <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a> -->
+            <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST" style="display:inline;">
+                <input type="hidden" name="id" value="<?= intval($post->id) ?>">
+                <input type="submit" value="Suprimer">
+            </form>
+        <?php endif ?>
+
+        
 
         <p><?= nl2br(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8')) ?></p>
 
 
         <h3>Les derniers commentaires</h3>
 
-        <p class="total-comments"><?= $totalPostComments ?>&nbsp;<i class="fas fa-comment-alt"></i></p>
+        <p class="total-comments"><?= $totalPostComments ?>&nbsp;<i class="far fa-comment"></i></p>
 
         <?php foreach ($comments as $comment): ?>
             <article class="card">
                 <p><?= htmlspecialchars($comment->content, ENT_QUOTES, 'UTF-8') ?></p>
-                <em>posté par <?= htmlspecialchars(ucfirst($comment->name), ENT_QUOTES, 'UTF-8') ?> le <?= $comment->created_at ?></em>
+                <em>posté par <?= htmlspecialchars(ucfirst($comment->name), ENT_QUOTES, 'UTF-8') ?> le <?= $comment->created ?></em>
             </article>
         <?php endforeach ?>
 
