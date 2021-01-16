@@ -11,8 +11,7 @@ include_once 'inc/DatabaseConnection.php';
  * Start session
  ******************************************************************************/
 
-session_start([ 'cookie_httponly' => true, 'cookie_secure' => true ]);
-
+startSession();
 // dd($_SESSION);
 
 /**

@@ -11,12 +11,7 @@ include_once 'inc/DatabaseConnection.php';
  * Check if a session is already started if it is not started
  *******************************************************************************/
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-// debug($_SERVER);
-// debug($_SESSION);
+startSession();
 
 /**
  * Get all posts

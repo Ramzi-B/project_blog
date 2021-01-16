@@ -4,9 +4,7 @@
  * Check if a session is already started if it is not started
  ******************************************************************************/
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+startSession();
 
 unset($_SESSION['auth']);
 

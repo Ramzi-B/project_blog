@@ -10,9 +10,7 @@ include_once 'inc/utils.php';
  * Check if a session is already started if it is not started
  ******************************************************************************/
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+startSession();
 
 /** 
  * Check for empty fields

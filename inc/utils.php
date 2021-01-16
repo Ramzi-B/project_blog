@@ -30,3 +30,13 @@ function getConfig($fileName)
 {
     return include ROOT_PATH . "/../config/{$fileName}.php";
 }
+
+function startSession()
+{
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start([ 
+            'cookie_httponly' => true, 
+            'cookie_secure' => true 
+        ]);
+    }
+}
