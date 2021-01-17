@@ -132,7 +132,7 @@ $totalComments = $result->totalComments;
 // dd($totalComments);
 // dd($totalPosts);
 // dd($currentPage);
-dd($posts);
+// dd($posts);
 // dd($currentPage);
 // dd($_GET);
 // dd($_SERVER);
@@ -247,7 +247,8 @@ dd($posts);
                         <a href="/showpost.php?id=<?= intval($post->id) ?>"><?= validate($post->title) ?></a>
                     </h2>
 
-                    <em>Posté par <?= validate($post->authorName, ENT_QUOTES, 'UTF-8') ?> le <?= validate($post->created) ?></em></br>
+                    <em>Posté par <?= validate($post->authorName) ?> le <?= validate($post->created) ?></em>
+                    </br>
 
                     <em>
                         Categorie&nbsp;:
@@ -276,8 +277,10 @@ dd($posts);
 
         <!-- List of categories -->
         <aside class="categories">
+
             <h4>Catégories</h4>
-            <ul class="navbar">
+
+            <ul>
                 <?php foreach ($categories as $category): ?>
                     <li>
                         <a href="/category.php?id=<?= intval($category->id) ?>">
@@ -286,6 +289,7 @@ dd($posts);
                     </li>
                 <?php endforeach ?>
             </ul>
+            
         </aside>
 
         <div class="clearfix"></div>

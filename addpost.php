@@ -55,7 +55,7 @@ if (!empty($_POST)) {
     }
 
     if (!empty($_POST['title']) && !empty($_POST['content'])) {
-        $sql = 'INSERT INTO posts(title, content, author_id, category_id, created_at) VALUES (:title, :content, :author, :category, NOW())';
+        $sql = 'INSERT INTO posts(title, content, author_id, category_id, created) VALUES (:title, :content, :author, :category, NOW())';
         $statement = getDatabase()->prepare($sql);
         $statement->bindParam(':title', $_POST['title'], PDO::PARAM_STR);
         $statement->bindParam(':content', $_POST['content'], PDO::PARAM_STR);

@@ -60,7 +60,7 @@ if (!empty($_POST)) {
 }
 
 // debug($_SESSION);
-dd($_GET);
+// dd($_GET);
 
 ?>
 <!DOCTYPE html>
