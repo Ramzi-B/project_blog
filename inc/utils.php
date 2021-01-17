@@ -26,10 +26,10 @@ function checkIntegerRange($int, $min, $max)
 }
 
 
-function getConfig($fileName)
-{
-    return include ROOT_PATH . "/../config/{$fileName}.php";
-}
+// function getConfig($fileName)
+// {
+//     return include ROOT_PATH . "/../config/{$fileName}.php";
+// }
 
 function startSession()
 {
@@ -39,4 +39,9 @@ function startSession()
             'cookie_secure' => true 
         ]);
     }
+}
+
+function validate(string $args)
+{
+    return htmlspecialchars($args, ENT_QUOTES, 'UTF-8');
 }

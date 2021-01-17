@@ -115,10 +115,10 @@ dd($_GET);
                 <input type="hidden" name="postid" value="<?= intval($post->id) ?>">
 
                 <label for="title">Titre</label>
-                <input type="text" id="title" name="title" value="<?= htmlspecialchars($post->title, ENT_QUOTES, 'UTF-8') ?>">
+                <input type="text" id="title" name="title" value="<?= validate($post->title) ?>">
 
                 <label for="content">Article</label>
-                <textarea id="content" name="content" rows="15"><?= htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8') ?></textarea>
+                <textarea id="content" name="content" rows="15"><?= validate($post->content) ?></textarea>
 
                 <input type="submit" value="Mettre à jour">
                 <!-- <button type="submit" class="btn">Mettre à jour</button> -->
