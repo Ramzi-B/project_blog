@@ -29,7 +29,9 @@ $totalPages = ceil($totalPosts/$postPerPage);
 $currentPage = 1;
 
 // Check
-if (isset($_GET['page']) && !empty($_GET['page']) && $_GET['page'] > 0 && $_GET['page'] <= $totalPages) {
+if (isset($_GET['page']) && !empty($_GET['page']) && 
+    $_GET['page'] > 0 && $_GET['page'] <= $totalPages) 
+{
     $currentPage = (int) $_GET['page'];
 
     if ($currentPage == '1') {
@@ -76,12 +78,25 @@ $categories = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
 
 /**
+ * Get last posts
+ ******************************************************************************/
+
+$sql = 'SELECT posts.title FROM posts 
+    ORDER BY created DESC LIMIT 0, 3
+';
+$statement = getDatabase()->query($sql);
+$result = $statement->fetchAll(PDO::FETCH_OBJ);
+$statement->closeCursor();
+$lastPosts = $result;
+
+/**
  * Get last comments
  ******************************************************************************/
 
-$sql = 'SELECT comments.content, comments.name, comments.created 
-    FROM comments 
-    ORDER BY created DESC LIMIT 5
+$sql = 'SELECT comments.name, posts.title AS postTitle
+    FROM comments
+    INNER JOIN posts ON comments.post_id = posts.id 
+    ORDER BY comments.created DESC LIMIT 0, 3
 ';
 $statement = getDatabase()->query($sql);
 $result = $statement->fetchAll(PDO::FETCH_OBJ);
@@ -181,18 +196,18 @@ $lastComments = $result;
                 <article class="card">
 
                     <section class="card__header">
-                        <h2><?= htmlspecialchars(ucfirst($post->title), ENT_QUOTES, 'UTF-8') ?></h2>
-                        <em>Posté par <?= htmlspecialchars(ucfirst($post->author), ENT_QUOTES, 'UTF-8') ?> le <?= $post->created ?></em></br>
+                        <h2><?= validate(ucfirst($post->title)) ?></h2>
+                        <em>Posté par <?= validate(ucfirst($post->author)) ?> le <?= validate($post->created) ?></em></br>
                         <em>
                             <span>Categorie:&nbsp;</span>
                             <a href="/category.php?id=<?= intval($post->category_id) ?>">
-                                <?= htmlspecialchars(ucfirst($post->category), ENT_QUOTES, 'UTF-8') ?>
+                                <?= validate(ucfirst($post->category)) ?>
                             </a>
                         </em>
                     </section>
 
                     <section class="card__body">
-                        <p><?= nl2br(substr(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8'), 0, 100)) ?>&nbsp;...</p>
+                        <p><?= nl2br(substr(validate($post->content), 0, 100)) ?>&nbsp;...</p>
                         <p><a class="btn" href="/showpost.php?id=<?= intval($post->id) ?>">Voir plus</a></p>
                     </section>
 
@@ -211,23 +226,31 @@ $lastComments = $result;
                 <?php foreach ($categories as $category): ?>
                     <li>
                         <a href="/category.php?id=<?= intval($category->id) ?>">
-                            <?= htmlspecialchars(ucfirst($category->categoryName), ENT_QUOTES, 'UTF-8')?>
+                            <?= validate(ucfirst($category->categoryName)) ?>
                         </a>
                     </li>
                 <?php endforeach ?>
             </ul>
 
-            <h4>les derniers articles</h4>
+            <h4>articles récents</h4>
+
+            <?php foreach ($lastPosts as $lastPost): ?>
+
+                <ul>
+                    <li><?= validate($lastPost->title) ?></li>
+                </ul>
+
+            <?php endforeach ?>
         
-            <ul>
-                <li></li>
-            </ul>
-        
-            <h4>les derniers commentaires</h4>
-        
-            <ul>
-                <li></li>
-            </ul>
+            <h4>commentaires récents</h4>
+
+            <?php foreach ($lastComments as $lastComment): ?>
+
+                <ul>
+                    <li><?= validate($lastComment->name). ' dans ' . validate($lastComment->postTitle)?></li>
+                </ul>
+
+            <?php endforeach ?>
         
         </aside>
 

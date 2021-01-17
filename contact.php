@@ -22,10 +22,10 @@ if (isset($_POST) && !empty($_POST)) {
     {
         $_SESSION['flashbox']['danger'] = "Vous devez remplir tout les champs requis *";
     } else {
-        $name = htmlspecialchars($_POST['name']);
-        $email_address = htmlspecialchars($_POST['email']);
-        $website = htmlspecialchars($_POST['website']);
-        $message = htmlspecialchars($_POST['message']);
+        $name = validate($_POST['name']);
+        $email_address = validate($_POST['email']);
+        $website = validate($_POST['website']);
+        $message = validate($_POST['message']);
         
         // Create the email
         $to = 'admin@monblog.com';

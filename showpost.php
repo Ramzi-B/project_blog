@@ -104,7 +104,7 @@ if (isset($_POST) && !empty($_POST)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
-    <title><?= $post->title ?></title>
+    <title><?= validate($post->title) ?></title>
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/normalize.css">
@@ -133,13 +133,13 @@ if (isset($_POST) && !empty($_POST)) {
     <!-- Main -->
     <main class="container">
 
-        <h1><?= htmlspecialchars(ucfirst($post->title), ENT_QUOTES, 'UTF-8') ?></h1>
+        <h1><?= validate(ucfirst($post->title)) ?></h1>
 
         <em>
-            Posté par <?= htmlspecialchars(ucfirst($post->authorName), ENT_QUOTES, 'UTF-8') ?> le <?= $post->created ?>
+            Posté par <?= validate(ucfirst($post->authorName)) ?> le <?= $post->created ?>
             Categorie&nbsp;:
             <a href="/category.php?id=<?= intval($post->category_id) ?>">
-                &nbsp;<?= htmlspecialchars(ucfirst($post->categoryName), ENT_QUOTES, 'UTF-8') ?>
+                &nbsp;<?= validate(ucfirst($post->categoryName)) ?>
             </a>
         </em>
 
@@ -162,12 +162,9 @@ if (isset($_POST) && !empty($_POST)) {
                 <input type="hidden" name="id" value="<?= intval($post->id) ?>">
                 <input type="submit" value="Suprimer">
             </form>
-        <?php endif ?>
+        <?php endif ?>        
 
-        
-
-        <p><?= nl2br(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8')) ?></p>
-
+        <p><?= nl2br(validate($post->content)) ?></p>
 
         <h3>Les derniers commentaires</h3>
 
@@ -175,8 +172,8 @@ if (isset($_POST) && !empty($_POST)) {
 
         <?php foreach ($comments as $comment): ?>
             <article class="card">
-                <p><?= htmlspecialchars($comment->content, ENT_QUOTES, 'UTF-8') ?></p>
-                <em>posté par <?= htmlspecialchars(ucfirst($comment->name), ENT_QUOTES, 'UTF-8') ?> le <?= $comment->created ?></em>
+                <p><?= validate($comment->content) ?></p>
+                <em>posté par <?= validate(ucfirst($comment->name)) ?> le <?= validate($comment->created) ?></em>
             </article>
         <?php endforeach ?>
 

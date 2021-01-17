@@ -64,7 +64,7 @@ $statement->closeCursor();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
-    <title>Categorie <?= htmlspecialchars($posts[0]->categoryName) ?></title>
+    <title>Categorie <?= validate($posts[0]->categoryName) ?></title>
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/normalize.css">
@@ -93,21 +93,24 @@ $statement->closeCursor();
     <!-- Main -->
     <main class="container">
 
-        <h1>Categorie <?= htmlspecialchars($posts[0]->categoryName, ENT_QUOTES, 'UTF-8') ?></h1>
-
+        <?php if (empty($posts)): ?>
+            <p>Il n'y aucun articles</p>
+        <?php else: ?>
+            <h1>Categorie <?= validate($posts[0]->categoryName) ?></h1>
+        <?php endif ?>
 
         <section class="post-content">
 
             <?php foreach ($posts as $post): ?>
 
                 <article class="card">
-                    <h2 class=""><?= htmlspecialchars(ucfirst($post->title), ENT_QUOTES, 'UTF-8') ?></h2>
+                    <h2 class=""><?= validate(ucfirst($post->title)) ?></h2>
 
-                    <em>Categorie: <a href="/category.php?id=<?= intval($post->category_id) ?>"><?= htmlspecialchars($post->categoryName, ENT_QUOTES, 'UTF-8') ?></a></em></br>
+                    <em>Categorie: <a href="/category.php?id=<?= intval($post->category_id) ?>"><?= validate($post->categoryName) ?></a></em></br>
 
-                    <em>Posté par <?= htmlspecialchars($post->authorName, ENT_QUOTES, 'UTF-8') ?> le <?= $post->created ?></em>
+                    <em>Posté par <?= validate($post->authorName) ?> le <?= validate($post->created) ?></em>
 
-                    <p><?= nl2br(substr(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8'), 0, 100)) ?>&nbsp...</p>
+                    <p><?= nl2br(substr(validate($post->content), 0, 100)) ?>&nbsp...</p>
 
                     <p><a class="btn" href="/showpost.php?id=<?= intval($post->id) ?>">Voir plus</a></p>
 
@@ -123,7 +126,7 @@ $statement->closeCursor();
                 <?php foreach ($categories as $category): ?>
                     <li>
                         <a href="/category.php?id=<?= intval($category->id) ?>">
-                            <?= htmlspecialchars($category->categoryName, ENT_QUOTES, 'UTF-8')?>
+                            <?= validate($category->categoryName) ?>
                         </a>
                     </li>
                 <?php endforeach ?>

@@ -132,7 +132,7 @@ $totalComments = $result->totalComments;
 // dd($totalComments);
 // dd($totalPosts);
 // dd($currentPage);
-// dd($posts);
+dd($posts);
 // dd($currentPage);
 // dd($_GET);
 // dd($_SERVER);
@@ -154,6 +154,7 @@ $totalComments = $result->totalComments;
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+
 	<header>
         <section class="container">
             <div class="header-top">
@@ -174,6 +175,7 @@ $totalComments = $result->totalComments;
         <h1>Dashboard</h1>
         <!-- <em>Bienvenue <?= $_SESSION['auth']['name']; ?></em> -->
 
+        <!-- Session flash messages -->
         <?php if (isset($_SESSION['flashbox'])): ?>
             <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
     			<section class="flashbox flashbox-<?= $type; ?>">
@@ -242,19 +244,19 @@ $totalComments = $result->totalComments;
                 <article class="card">
 
                     <h2 class="">
-                        <a href="/showpost.php?id=<?= intval($post->id) ?>"><?= htmlspecialchars($post->title, ENT_QUOTES, 'UTF-8') ?></a>
+                        <a href="/showpost.php?id=<?= intval($post->id) ?>"><?= validate($post->title) ?></a>
                     </h2>
 
-                    <em>Posté par <?= htmlspecialchars($post->authorName, ENT_QUOTES, 'UTF-8') ?> le <?= $post->created ?></em></br>
+                    <em>Posté par <?= validate($post->authorName, ENT_QUOTES, 'UTF-8') ?> le <?= validate($post->created) ?></em></br>
 
                     <em>
                         Categorie&nbsp;:
                         <a href="/category.php?id=<?= intval($post->category_id) ?>">
-                            &nbsp;<?= htmlspecialchars($post->categoryName, ENT_QUOTES, 'UTF-8') ?>
+                            &nbsp;<?= validate($post->categoryName) ?>
                         </a>
                     </em>
 
-                    <p><?= nl2br(substr(htmlspecialchars($post->content, ENT_QUOTES, 'UTF-8'), 0, 100)) ?>&nbsp;...</p>
+                    <p><?= nl2br(substr(validate($post->content), 0, 100)) ?>&nbsp;...</p>
 
                     <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
                     <!-- <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a> -->
@@ -279,7 +281,7 @@ $totalComments = $result->totalComments;
                 <?php foreach ($categories as $category): ?>
                     <li>
                         <a href="/category.php?id=<?= intval($category->id) ?>">
-                            <?= htmlspecialchars($category->categoryName, ENT_QUOTES, 'UTF-8')?>
+                            <?= validate($category->categoryName) ?>
                         </a>
                     </li>
                 <?php endforeach ?>
@@ -302,9 +304,9 @@ $totalComments = $result->totalComments;
 
                 <tbody>
                     <tr>
-                        <td><a href="/showpost.php?id=<?= intval($post->id) ?>"><?= htmlspecialchars($post->title, ENT_QUOTES, 'UTF-8') ?></a></td>
-                        <td><?= $post->created ?></td>
-                        <td><?= htmlspecialchars($post->authorName, ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><a href="/showpost.php?id=<?= intval($post->id) ?>"><?= validate($post->title) ?></a></td>
+                        <td><?= validate($post->created) ?></td>
+                        <td><?= validate($post->authorName) ?></td>
                         <td>
                             <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
                             <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a>

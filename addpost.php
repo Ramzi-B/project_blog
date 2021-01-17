@@ -133,7 +133,7 @@ if (!empty($_POST)) {
             <select name="author" id="author" data-help="L'auteur">
                 <?php foreach ($authors as $author): ?>
                     <option value="<?= intval($author->id) ?>">
-                        <?= htmlspecialchars(ucfirst($author->authorName), ENT_QUOTES, 'UTF-8') ?>
+                        <?= validate(ucfirst($author->authorName)) ?>
                     </option>
                 <?php endforeach ?>
             </select>
@@ -142,7 +142,7 @@ if (!empty($_POST)) {
             <select name="category" id="category" data-help="La catégorie">
                 <?php foreach ($categories as $category): ?>
                     <option value="<?= intval($category->id) ?>" data-help="Auteur">
-                        <?= htmlspecialchars(ucfirst($category->categoryName), ENT_QUOTES, 'UTF-8') ?>
+                        <?= validate(ucfirst($category->categoryName)) ?>
                     </option>
                 <?php endforeach ?>
             </select>
