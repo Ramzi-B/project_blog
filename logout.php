@@ -1,6 +1,12 @@
 <?php
 
 /**
+ * Includes files
+ *******************************************************************************/
+
+include_once 'inc/utils.php';
+
+/**
  * Check if a session is already started if it is not started
  ******************************************************************************/
 
