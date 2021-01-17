@@ -22,7 +22,6 @@ $statement = getDatabase()->query($sql);
 $categories = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
 
-
 /**
  * Get all posts by category
  ******************************************************************************/

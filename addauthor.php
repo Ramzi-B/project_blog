@@ -21,8 +21,7 @@ startSession();
 if (!isAuthenticated()) {
     $_SESSION['flashbox']['danger'] = "Vous n'avez pas le droit d'accéder à cette page!";
     http_response_code(301);
-    header('Location: /');
-    exit();
+    redirect('/');
 }
 
 // debug($_SESSION);
@@ -49,8 +48,7 @@ if (!empty($_POST)) {
 
         $_SESSION['flashbox']['success'] = "L'auteur a bien été ajouté!";
 
-        header('Location: /dashboard.php');
-        exit();
+        redirect('dashboard.php');
     }
 }
 ?>

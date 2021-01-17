@@ -92,8 +92,7 @@ if (isset($_POST) && !empty($_POST)) {
         
         $_SESSION['flashbox']['success'] = 'Votre commentaire a bien été ajouté!';
 
-        header('Location: /showpost.php?id=' . intval($_POST['post_id']));
-        exit();
+        redirect('showpost.php?id=' . intval($_POST['post_id']));
     }
 }
 ?>
@@ -136,7 +135,7 @@ if (isset($_POST) && !empty($_POST)) {
         <h1><?= validate(ucfirst($post->title)) ?></h1>
 
         <em>
-            Posté par <?= validate(ucfirst($post->authorName)) ?> le <?= $post->created ?>
+            Posté par <?= validate(ucfirst($post->authorName)) ?> le <?= validate($post->created) ?>
             Categorie&nbsp;:
             <a href="/category.php?id=<?= intval($post->category_id) ?>">
                 &nbsp;<?= validate(ucfirst($post->categoryName)) ?>

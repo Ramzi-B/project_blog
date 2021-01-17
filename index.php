@@ -36,8 +36,7 @@ if (isset($_GET['page']) && !empty($_GET['page']) &&
 
     if ($currentPage == '1') {
         http_response_code(301);
-        header('Location: /');
-        exit();
+        redirect('/');
     }
 
 } else {

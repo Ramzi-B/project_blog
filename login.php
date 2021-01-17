@@ -15,13 +15,11 @@ startSession();
 
 /**
  * Check if the admin user is connected redirect to index
- * Determine if "$_SESSION['auth']" declared and is different than NULL
  ******************************************************************************/
 
-if (isset($_SESSION['auth'])) {
+if (isAuthenticated()) {
     http_response_code(301);
-    header('Location: /');
-    exit();
+    redirect('/');
 }
 
 /**
@@ -49,9 +47,7 @@ if (isset($_POST) && !empty($_POST)) {
         if (password_verify($_POST['password'], $user['password'])) {
             $_SESSION['auth'] = $user;
             $_SESSION['flashbox']['success'] = 'Vous êtes maintenant connecté!';
-
-            header('Location: dashboard.php');
-            exit();
+            redirect('dashboard.php');
         } else {
             $_SESSION['flashbox']['danger'] = 'Identifiant ou mot de passe incorrecte!';
         }

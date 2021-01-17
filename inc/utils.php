@@ -24,3 +24,13 @@ function validate(string $args)
 {
     return htmlspecialchars($args, ENT_QUOTES, 'UTF-8');
 }
+
+function redirect($uri)
+{
+    if (substr($uri, 0, 1) !== '/') {
+        $uri = "/{$uri}";
+    }
+
+    header("Location: {$uri}");
+    exit();
+}

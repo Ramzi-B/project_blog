@@ -21,8 +21,7 @@ startSession();
 if (!isAuthenticated()) {
     $_SESSION['flashbox']['danger'] = "Vous n'avez pas le droit d'accéder à cette page!";
     http_response_code(301);
-    header('Location: /');
-    exit();
+    redirect('/');
 }
 
 /**
@@ -289,7 +288,7 @@ $totalComments = $result->totalComments;
                     </li>
                 <?php endforeach ?>
             </ul>
-            
+
         </aside>
 
         <div class="clearfix"></div>
