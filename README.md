@@ -1,7 +1,7 @@
 # project_blog
 
 > This is a blog project using procedural PHP.
-> # Warning not to be used in production !!!
+> ### Warning not to be used in production !!!
 
 - list all posts
 - list posts by category
