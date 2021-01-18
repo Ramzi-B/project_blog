@@ -11,7 +11,8 @@ include_once 'inc/DatabaseConnection.php';
  * Check if a session is already started if it is not started
  ******************************************************************************/
 
-startSession();
+// startSession();
+// dd($_SESSION);
 
 /**
  * Check if the admin user is logged in
@@ -23,6 +24,8 @@ if (!isAuthenticated()) {
     http_response_code(301);
     redirect('/');
 }
+
+// dd($_SESSION);
 
 /**
  * Pagination
@@ -60,8 +63,7 @@ if (isset($_GET['page']) && !empty($_GET['page']) &&
 
     if ($currentPage == '1') {
         http_response_code(301);
-        header('Location: /dashboard.php');
-        exit();
+        redirect('dashboard.php');
     }
     // dd($currentPage);
 }
@@ -83,7 +85,10 @@ $sql = 'SELECT
         INNER JOIN categories ON posts.category_id = categories.id
         ORDER BY created DESC LIMIT
 '. $startCount . ',' . $postPerPage;
+
 $statement = getDatabase()->query($sql);
+$statement->bindParam('startCount', $startCount, PDO::PARAM_INT);
+$statement->bindParam('postPerPage', $postPerPage, PDO::PARAM_INT);
 $posts = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
 
@@ -218,7 +223,7 @@ $totalComments = $result->totalComments;
 
             <?php if ($currentPage > 1): ?>
                 <li class="prev">
-                    <a href="/dashboard.php?page=<?= $currentPage - 1 ?>">&laquo;</a>
+                    <a href="/dashboard.php?page=<?= $currentPage - 1 ?>"><i class="fas fa-chevron-left"></i></a>
                 </li>
             <?php endif ?>
 
@@ -230,7 +235,7 @@ $totalComments = $result->totalComments;
 
             <?php if ($currentPage < $totalPages): ?>
                 <li class="next">
-                    <a href="/dashboard.php?page=<?= $currentPage + 1 ?>">&raquo;</a>
+                    <a href="/dashboard.php?page=<?= $currentPage + 1 ?>"><i class="fas fa-chevron-right"></i></a>
                 </li>
             <?php endif ?>
 
@@ -264,7 +269,7 @@ $totalComments = $result->totalComments;
                     <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST"
                         onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
                         <input type="hidden" name="id" value="<?= intval($post->id) ?>">
-                        <input class="btn" type="submit" value="Suprimer">
+                        <input type="submit" value="Supprimer">
                         <!-- <button class="btn" type="submit">Supprimer</button> -->
                     </form>
 

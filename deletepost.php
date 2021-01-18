@@ -11,7 +11,7 @@ include_once 'inc/DatabaseConnection.php';
  * Check if a session is already started if it is not started
  ******************************************************************************/
 
-startSession();
+// startSession();
 
 /**
  * Check if the admin user is logged in

@@ -11,7 +11,8 @@ function getDatabase()
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->exec('SET NAMES "utf8"');
     } catch (\PDOException $e) {
-        die('Error: ' . $e->getMessage());
+        // die('Error: ' . $e->getMessage());
+        die('Database error: ' . $e->getMessage() . ' in: ' . $e->getFile(). ' line: ' . $e->getLine());
     }
 
     return $pdo;

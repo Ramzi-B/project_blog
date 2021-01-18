@@ -62,6 +62,8 @@ $sql = 'SELECT posts.id, posts.title, posts.content, posts.author_id,
 '. $startCount . ',' . $postPerPage;
 
 $statement = getDatabase()->query($sql);
+$statement->bindParam('startCount', $startCount, PDO::PARAM_INT);
+$statement->bindParam('postPerPage', $postPerPage, PDO::PARAM_INT);
 $posts = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
 
@@ -115,6 +117,17 @@ $lastComments = $result;
 // dd($posts);
 // dd($categories);
 // dd($_COOKIE);
+
+// $action = $_GET['action'] ?? '/';
+// $page = $action();
+
+// dd($action . '____________');
+// dd($page);
+
+// function show()
+// {
+//     dd('show.php');
+// }
 
 ?>
 <!DOCTYPE html>
@@ -196,7 +209,8 @@ $lastComments = $result;
 
                     <section class="card__header">
                         <h2><?= validate(ucfirst($post->title)) ?></h2>
-                        <em>Posté par <?= validate(ucfirst($post->author)) ?> le <?= validate($post->created) ?></em></br>
+                        <em><?= validate(ucfirst($post->author)) ?> le <?= validate($post->created) ?></em>
+                        </br>
                         <em>
                             <span>Categorie:&nbsp;</span>
                             <a href="/category.php?id=<?= intval($post->category_id) ?>">

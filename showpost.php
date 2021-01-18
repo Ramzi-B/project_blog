@@ -159,7 +159,7 @@ if (isset($_POST) && !empty($_POST)) {
             <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST"
                 onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
                 <input type="hidden" name="id" value="<?= intval($post->id) ?>">
-                <input type="submit" value="Suprimer">
+                <input type="submit" value="Supprimer">
             </form>
         <?php endif ?>        
 
@@ -172,7 +172,7 @@ if (isset($_POST) && !empty($_POST)) {
         <?php foreach ($comments as $comment): ?>
             <article class="card">
                 <p><?= validate($comment->content) ?></p>
-                <em>posté par <?= validate(ucfirst($comment->name)) ?> le <?= validate($comment->created) ?></em>
+                <em><?= validate(ucfirst($comment->name)) ?> le <?= validate($comment->created) ?></em>
             </article>
         <?php endforeach ?>
 

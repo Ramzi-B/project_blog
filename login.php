@@ -11,16 +11,24 @@ include_once 'inc/DatabaseConnection.php';
  * Check if a session is already started if it is not started
  ******************************************************************************/
 
-startSession();
+// startSession();
 
 /**
  * Check if the admin user is connected redirect to index
  ******************************************************************************/
 
+// if (isset($_SESSION['auth'])) {
+//     http_response_code(301);
+//     header("Location: /");
+//     exit();
+//     // redirect('/');
+// }
+
 if (isAuthenticated()) {
     http_response_code(301);
     redirect('/');
 }
+
 
 /**
  * Check for empty fields

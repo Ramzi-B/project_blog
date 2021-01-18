@@ -7,6 +7,7 @@ function dd($var)
 
 function isAuthenticated()
 {
+    startSession();
     return isset($_SESSION['auth']) && $_SESSION['auth'] == true;
 }
 
