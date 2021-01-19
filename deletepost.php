@@ -8,12 +8,6 @@ include_once 'inc/utils.php';
 include_once 'inc/DatabaseConnection.php';
 
 /**
- * Check if a session is already started if it is not started
- ******************************************************************************/
-
-// startSession();
-
-/**
  * Check if the admin user is logged in
  * if he's not redirected to the index page
  *******************************************************************************/

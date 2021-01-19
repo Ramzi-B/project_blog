@@ -8,27 +8,13 @@ include_once 'inc/utils.php';
 include_once 'inc/DatabaseConnection.php';
 
 /**
- * Check if a session is already started if it is not started
- ******************************************************************************/
-
-// startSession();
-
-/**
  * Check if the admin user is connected redirect to index
  ******************************************************************************/
-
-// if (isset($_SESSION['auth'])) {
-//     http_response_code(301);
-//     header("Location: /");
-//     exit();
-//     // redirect('/');
-// }
 
 if (isAuthenticated()) {
     http_response_code(301);
     redirect('/');
 }
-
 
 /**
  * Check for empty fields
@@ -108,7 +94,7 @@ if (isset($_POST) && !empty($_POST)) {
     		<?php unset($_SESSION['flashbox']); ?>
     	<?php endif ?>
 
-        <section class="login">
+        <section class="">
 
             <form action="" method="POST">
 
@@ -117,12 +103,12 @@ if (isset($_POST) && !empty($_POST)) {
                 <p id="help-form-text"></p>
 
                 <label for="name">Nom ou email</label>
-                <input type="text" name="name" id="name" placeholder="Votre Nom ou email *" data-help="Votre Nom ou email">
+                <input type="text" name="name" id="name" placeholder="Votre Nom ou email *" data-help="Votre Nom ou email" autocomplete="off" required>
 
                 <label for="password">Mot de passe</label>
-                <input type="password" name="password" id="password" placeholder="Votre mot de passe *" data-help="Votre mot de passe">
+                <input type="password" name="password" id="password" placeholder="Votre mot de passe *" data-help="Votre mot de passe" required>
 
-                <input type="submit" value="Se connecter">
+                <input class="btn" type="submit" value="Se connecter">
 
             </form>
 

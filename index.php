@@ -12,7 +12,6 @@ include_once 'inc/DatabaseConnection.php';
  ******************************************************************************/
 
 startSession();
-// dd($_SESSION);
 
 /**
  * Pagination
@@ -82,7 +81,7 @@ $statement->closeCursor();
  * Get last posts
  ******************************************************************************/
 
-$sql = 'SELECT posts.title FROM posts 
+$sql = 'SELECT posts.id, posts.title FROM posts 
     ORDER BY created DESC LIMIT 0, 3
 ';
 $statement = getDatabase()->query($sql);
@@ -106,6 +105,7 @@ $lastComments = $result;
 
 // dd($_GET);
 // dd($lastComments);
+// dd($lastPosts);
 // dd($currentPage);
 // dd($totalPosts);
 // dd($totalPages);
@@ -209,18 +209,21 @@ $lastComments = $result;
 
                     <section class="card__header">
                         <h2><?= validate(ucfirst($post->title)) ?></h2>
-                        <em><?= validate(ucfirst($post->author)) ?> le <?= validate($post->created) ?></em>
-                        </br>
-                        <em>
-                            <span>Categorie:&nbsp;</span>
-                            <a href="/category.php?id=<?= intval($post->category_id) ?>">
-                                <?= validate(ucfirst($post->category)) ?>
-                            </a>
-                        </em>
+                        <small>
+                            <em><?= validate(ucfirst($post->author)) ?> le <?= validate($post->created) ?></em>
+                            <em>Categorie:
+                                <a href="/category.php?id=<?= intval($post->category_id) ?>">
+                                    <?= validate(ucfirst($post->category)) ?>
+                                </a>
+                            </em>
+                        </small>
                     </section>
 
                     <section class="card__body">
                         <p><?= nl2br(substr(validate($post->content), 0, 100)) ?>&nbsp;...</p>
+                    </section>
+                    
+                    <section class="card__footer">
                         <p><a class="btn" href="/showpost.php?id=<?= intval($post->id) ?>">Voir plus</a></p>
                     </section>
 
@@ -245,25 +248,29 @@ $lastComments = $result;
                 <?php endforeach ?>
             </ul>
 
-            <h4>articles récents</h4>
-
-            <?php foreach ($lastPosts as $lastPost): ?>
-
-                <ul>
-                    <li><?= validate($lastPost->title) ?></li>
-                </ul>
-
-            <?php endforeach ?>
+            <h4>Articles récents</h4>
+            
+            <ul>
+                <?php foreach ($lastPosts as $lastPost): ?>
+                    <li>
+                        <a href="/showpost.php?id=<?= intval($lastPost->id) ?>">
+                            <?= validate(ucfirst($lastPost->title)) ?>
+                        </a>
+                    </li>
+                <?php endforeach ?>
+            </ul>
         
-            <h4>commentaires récents</h4>
-
-            <?php foreach ($lastComments as $lastComment): ?>
-
-                <ul>
-                    <li><?= validate($lastComment->name). ' dans ' . validate($lastComment->postTitle)?></li>
-                </ul>
-
-            <?php endforeach ?>
+            <h4>Commentaires récents</h4>
+            
+            <ul>
+                <?php foreach ($lastComments as $lastComment): ?>
+                    <li>
+                        <a href="#">
+                            <?= validate(ucfirst($lastComment->name)).' dans '.validate($lastComment->postTitle)?>
+                        </a>
+                    </li>
+                <?php endforeach ?>
+            </ul>
         
         </aside>
 

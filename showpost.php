@@ -155,11 +155,10 @@ if (isset($_POST) && !empty($_POST)) {
         
         <?php if (isset($_SESSION['auth'])): ?>
             <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
-            <!-- <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a> -->
             <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST"
                 onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
                 <input type="hidden" name="id" value="<?= intval($post->id) ?>">
-                <input type="submit" value="Supprimer">
+                <input class="btn" type="submit" value="Supprimer">
             </form>
         <?php endif ?>        
 
@@ -198,7 +197,7 @@ if (isset($_POST) && !empty($_POST)) {
             <label for="content">Commentaire</label>
             <textarea name="content" id="content" cols="30" rows="10" placeholder="Commentaire *" data-help="Votre Commentaire"></textarea>
 
-            <input type="submit" value="Envoyer">
+            <input class="btn" type="submit" value="Envoyer">
 
         </form>
 

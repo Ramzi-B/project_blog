@@ -110,7 +110,7 @@ if (isset($_POST) && !empty($_POST)) {
                 <label for="message">Message</label>
                 <textarea name="message" id="message" cols="30" rows="10" placeholder="Votre message *" data-help="Votre Commentaire"></textarea>
 
-                <input type="submit" value="Envoyer">
+                <input class="btn" type="submit" value="Envoyer">
 
             </form>
 

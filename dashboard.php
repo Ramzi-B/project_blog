@@ -8,13 +8,6 @@ include_once 'inc/utils.php';
 include_once 'inc/DatabaseConnection.php';
 
 /**
- * Check if a session is already started if it is not started
- ******************************************************************************/
-
-// startSession();
-// dd($_SESSION);
-
-/**
  * Check if the admin user is logged in
  * if he is not redirected to the index page
  ******************************************************************************/
@@ -32,7 +25,7 @@ if (!isAuthenticated()) {
  ******************************************************************************/
 
 // Count all posts
-$sql = 'SELECT COUNT(*) AS totalPosts FROM posts';
+$sql = 'SELECT COUNT("id") AS totalPosts FROM posts';
 $statement = getDatabase()->query($sql);
 $result = $statement->fetch(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -42,23 +35,24 @@ $postPerPage = 6; // number of posts wanted per page
 $currentPage = 1; // The current page set to 1
 
 // divide all posts by postsPerPages to get the number of posts per page
-$totalPages = ceil($totalPosts/$postPerPage);
+$totalPages = (int)ceil($totalPosts/$postPerPage);
+
+// $page = $_GET['page'];
 
 // Check
 if (isset($_GET['page']) && !empty($_GET['page']) &&
     $_GET['page'] > 0 && $_GET['page'] <= $totalPages)
 {
     // $currentPage = intval($_GET['page']);
-
     $currentPage = $_GET['page'] ?? '1';
     // dd($currentPage);
 
     if (!filter_var($currentPage, FILTER_VALIDATE_INT)) {
-        throw new \Exception("Le numéro de page est invalide", 1);
+        throw new \Exception("Le numéro de page est invalide");
     }
 
     if ($currentPage <= 0) {
-        throw new \Exception("Le numéro de page est invalide", 1);
+        throw new \Exception("Le numéro de page est invalide");
     }
 
     if ($currentPage == '1') {
@@ -248,29 +242,27 @@ $totalComments = $result->totalComments;
                 <article class="card">
 
                     <h2 class="">
-                        <a href="/showpost.php?id=<?= intval($post->id) ?>"><?= validate($post->title) ?></a>
+                        <a href="/showpost.php?id=<?= intval($post->id) ?>"><?= validate(ucfirst($post->title)) ?></a>
                     </h2>
 
-                    <em>Posté par <?= validate($post->authorName) ?> le <?= validate($post->created) ?></em>
+                    <em><?= validate(ucfirst($post->authorName)) ?> le <?= validate($post->created) ?></em>
                     </br>
 
                     <em>
-                        Categorie&nbsp;:
+                        Categorie:
                         <a href="/category.php?id=<?= intval($post->category_id) ?>">
-                            &nbsp;<?= validate($post->categoryName) ?>
+                            <?= validate(ucfirst($post->categoryName)) ?>
                         </a>
                     </em>
 
                     <p><?= nl2br(substr(validate($post->content), 0, 100)) ?>&nbsp;...</p>
 
                     <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
-                    <!-- <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a> -->
 
                     <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST"
                         onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
                         <input type="hidden" name="id" value="<?= intval($post->id) ?>">
-                        <input type="submit" value="Supprimer">
-                        <!-- <button class="btn" type="submit">Supprimer</button> -->
+                        <input class="btn" type="submit" value="Supprimer">
                     </form>
 
                 </article>
@@ -288,7 +280,7 @@ $totalComments = $result->totalComments;
                 <?php foreach ($categories as $category): ?>
                     <li>
                         <a href="/category.php?id=<?= intval($category->id) ?>">
-                            <?= validate($category->categoryName) ?>
+                            <?= validate(ucfirst($category->categoryName)) ?>
                         </a>
                     </li>
                 <?php endforeach ?>
@@ -298,37 +290,12 @@ $totalComments = $result->totalComments;
 
         <div class="clearfix"></div>
 
-        <section>
-            <table>
-
-                <thead>
-                    <tr>
-                        <th>Titres</th>
-                        <th>Crée le</th>
-                        <th>Autheurs</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <tr>
-                        <td><a href="/showpost.php?id=<?= intval($post->id) ?>"><?= validate($post->title) ?></a></td>
-                        <td><?= validate($post->created) ?></td>
-                        <td><?= validate($post->authorName) ?></td>
-                        <td>
-                            <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
-                            <a class="btn" href="/deletepost.php?id=<?= intval($post->id) ?>">Supprimer</a>
-                        </td>
-                    </tr>
-                </tbody>
-
-            </table>
-        </section>
     </main>
 
     <footer>
         <p>Mon blog &copy; <?= Date('Y') ?> All rights reserved</p>
     </footer>
+
     <script src="js/main.js"></script>
 </body>
 </html>

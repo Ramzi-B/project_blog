@@ -8,12 +8,6 @@ include_once 'inc/utils.php';
 include_once 'inc/DatabaseConnection.php';
 
 /**
- * Check if a session is already started if it is not started
- *******************************************************************************/
-
-// startSession();
-
-/**
  * Check if the admin user is logged in
  * if he is not redirected to the index page
  *******************************************************************************/
@@ -145,7 +139,7 @@ if (!empty($_POST)) {
                 <?php endforeach ?>
             </select>
 
-            <input type="submit" value="Enregistrer">
+            <input class="btn" type="submit" value="Enregistrer">
             <a class="btn" href="/dashboard.php">Annuler</a>
 
         </form>
