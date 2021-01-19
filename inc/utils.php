@@ -26,10 +26,14 @@ function validate(string $args)
     return htmlspecialchars($args, ENT_QUOTES, 'UTF-8');
 }
 
-function redirect($uri)
+function redirect($uri, $code = null)
 {
     if (substr($uri, 0, 1) !== '/') {
         $uri = "/{$uri}";
+    }
+
+    if ($code == true) {
+        http_response_code($code);
     }
 
     header("Location: {$uri}");

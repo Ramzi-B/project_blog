@@ -14,8 +14,7 @@ include_once 'inc/DatabaseConnection.php';
 
 if (!isAuthenticated()) {
     $_SESSION['flashbox']['danger'] = "Vous n'avez pas le droit d'accéder à cette page!";
-    http_response_code(301);
-    redirect('/');
+    redirect('/', 301);
 }
 
 // debug($_SESSION);

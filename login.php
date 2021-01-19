@@ -12,8 +12,7 @@ include_once 'inc/DatabaseConnection.php';
  ******************************************************************************/
 
 if (isAuthenticated()) {
-    http_response_code(301);
-    redirect('/');
+    redirect('/', 301);
 }
 
 /**
