@@ -14,83 +14,66 @@ include_once 'inc/DatabaseConnection.php';
 
 if (!isAuthenticated()) {
     $_SESSION['flashbox']['danger'] = "Vous n'avez pas le droit d'accéder à cette page!";
+    // http_response_code(301);
     redirect('/', 301);
 }
 
 /**
- * Get the post to edit
+ * Get the comment to edit
  ******************************************************************************/
-$sql = 'SELECT posts.id, posts.title, posts.content, posts.author_id,
-    posts.category_id, posts.created, posts.updated, posts.published
-    FROM posts
-    WHERE posts.id = :id
+
+$sql = 'SELECT comments.id, comments.name, comments.content, comments.created,
+        comments.updated, comments.post_id, comments.email
+    FROM comments WHERE id = :id
 ';
+
 $statement = getDatabase()->prepare($sql);
 $statement->bindParam(':id', $_GET['id'], PDO::PARAM_INT);
 $statement->execute();
-$post = $statement->fetch(PDO::FETCH_OBJ);
+$comment = $statement->fetch(PDO::FETCH_OBJ);
 $statement->closeCursor();
 
-/**
- * Get all authors
- *******************************************************************************/
-
-$sql = 'SELECT authors.id, authors.authorName FROM authors';
-
-$statement = getDatabase()->query($sql);
-$authors = $statement->fetchAll(PDO::FETCH_OBJ);
-$statement->closeCursor();
-
+// dd($_POST);
+// dd($_GET);
+dd($comment);
 
 /**
- * Get all categories
- *******************************************************************************/
-
-$sql = 'SELECT categories.id, categories.categoryName FROM categories';
-
-$statement = getDatabase()->query($sql);
-$categories = $statement->fetchAll(PDO::FETCH_OBJ);
-$statement->closeCursor();
-
-/**
- * Check for empty fields
+ * Check
  ******************************************************************************/
 
 if (isset($_POST) && !empty($_POST)) {
-    $sql = 'UPDATE posts SET title = :title, content = :content, author_id = :author,
-            category_id = :category, updated = NOW() 
-        WHERE id = :id
-    ';
+    // dd($_POST);
+    // dd($_GET);
+    // dd($_SESSION);
+    // die();
+    $sql = 'UPDATE comments SET content = :content, updated = NOW() WHERE id = :id';
 
     $statement = getDatabase()->prepare($sql);
-    $statement->bindParam(':title', $_POST['title'], PDO::PARAM_STR);
     $statement->bindParam(':content', $_POST['content'], PDO::PARAM_STR);
-    $statement->bindParam(':author', $_POST['author'], PDO::PARAM_INT);
-    $statement->bindParam(':category', $_POST['category'], PDO::PARAM_INT);
-    $statement->bindParam(':id', $_POST['postid'], PDO::PARAM_INT);
+    $statement->bindParam(':id', $_POST['id'], PDO::PARAM_STR);
     $statement->execute();
     $statement->closeCursor();
+    
+    $_SESSION['flashbox']['success'] = "Le commmentaire a bien été modifié!";
 
-    $_SESSION['flashbox']['success'] = "L'article a bien été modifié!";
-
-    redirect('dashboard.php');
+    redirect('/showpost.php?id=' . $_POST['postid']);
 }
-
-// debug($_SESSION);
-// dd($_GET);
-
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <!-- https://favicon.io/favicon-generator -->
         <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
-        <title>Modifier l'article</title>
+        <!-- Title -->
+        <title>Modifier le commentaire</title>
         <!-- Font Awesome CDN -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
+        <!-- Normalize -->
         <link rel="stylesheet" href="/css/normalize.css">
+        <!-- CSS -->
         <link rel="stylesheet" href="/css/style.css">
     </head>
     <body>
@@ -121,39 +104,19 @@ if (isset($_POST) && !empty($_POST)) {
                         <span class="close"></span>
         				<p><?= $message; ?></p>
         			</section>
-        		<?php endforeach ?>
-        		<?php unset($_SESSION['flashbox']); ?>
+                <?php endforeach ?>                
+                <?php unset($_SESSION['flashbox']); ?>                
         	<?php endif ?>
 
-            <h1>Modifier l'article</h1>
+            <h1>Modifier le commentaire</h1>
 
             <form action="" method="POST">
 
-                <input type="hidden" name="postid" value="<?= intval($post->id) ?>">
+                <input type="hidden" name="postid" value="<?= intval($comment->post_id) ?>">
+                <input type="hidden" name="id" value="<?= intval($comment->id) ?>">
 
-                <label for="title">Titre</label>
-                <input type="text" id="title" name="title" value="<?= validate($post->title) ?>">
-
-                <label for="content">Article</label>
-                <textarea id="content" name="content" rows="15"><?= validate($post->content) ?></textarea>
-
-                <label for="author">Auteur</label>
-                <select name="author" id="author_id">
-                    <?php foreach ($authors as $author): ?>
-                        <option id="author" value="<?= intval($author->id) ?>">
-                            <?= validate($author->authorName) ?>
-                        </option>
-                    <?php endforeach ?>
-                </select>
-
-                <label for="category">Catégorie</label>
-                <select name="category" id="category">
-                    <?php foreach ($categories as $category): ?>
-                        <option id="category" value="<?= intval($category->id) ?>">
-                            <?= validate($category->categoryName) ?>
-                        </option>
-                    <?php endforeach ?>
-                </select>
+                <label for="title">Commentaire</label>
+                <input type="text" id="title" name="content" value="<?= validate($comment->content) ?>">
 
                 <input class="btn" type="submit" value="Mettre à jour">
                 <a class="btn" href="/dashboard.php">Annuler</a>
@@ -166,6 +129,6 @@ if (isset($_POST) && !empty($_POST)) {
             <p>Mon blog &copy; <?= Date('Y') ?> All rights reserved</p>
         </footer>
 
-        <script src="js/main.js"></script>
+        <script src="/js/main.js"></script>
     </body>
 </html>

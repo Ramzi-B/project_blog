@@ -14,10 +14,14 @@ function isAuthenticated()
 function startSession()
 {
     if (session_status() == PHP_SESSION_NONE) {
-        session_start([ 
-            'cookie_httponly' => true, 
-            'cookie_secure' => true 
-        ]);
+        // When you clear the cache (in development mode) the redirection
+        // doesn't work anymore because the session takes the two parameters 
+        // "cookie_httponly, cookie_secure".
+        session_start();
+        // session_start([ 
+        //     'cookie_httponly' => true, 
+        //     'cookie_secure' => true 
+        // ]);
     }
 }
 

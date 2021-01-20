@@ -172,6 +172,25 @@ if (isset($_POST) && !empty($_POST)) {
             <article class="card">
                 <p><?= validate($comment->content) ?></p>
                 <em><?= validate(ucfirst($comment->name)) ?> le <?= validate($comment->created) ?></em>
+                
+                <!-- if admin connected show buttons -->
+                <?php if (isAuthenticated()): ?>
+
+                    <div class="card_button">
+
+                        <a class="btn" href="/editcomment.php?id=<?= intval($comment->id) ?>">Modifier</a>
+    
+                        <form action="/deletecomment.php?id=<?= intval($comment->id) ?>" method="POST"
+                            onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
+                            <input type="hidden" name="post_id" value="<?= intval($comment->post_id) ?>">
+                            <input type="hidden" name="id" value="<?= intval($comment->id) ?>">
+                            <!-- <input type="submit" value="Suprimer"> -->
+                            <button class="btn" type="submit">Supprimer</button>
+                        </form>
+
+                    </div>
+
+                <?php endif ?>
             </article>
         <?php endforeach ?>
 
