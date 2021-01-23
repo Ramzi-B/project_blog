@@ -24,7 +24,7 @@ if (!isAuthenticated()) {
 // dd($_POST);
 // dd($_GET);
 // die();
-$sql = 'DELETE comments FROM comments WHERE id = :id';
+$sql = 'DELETE FROM comments WHERE comments.id = :id';
 
 $statement = getDatabase()->prepare($sql);
 $statement->bindParam(':id', $_GET['id'], PDO::PARAM_INT);

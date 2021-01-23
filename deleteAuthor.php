@@ -25,7 +25,7 @@ if (!isAuthenticated()) {
 // dd($_GET);
 // die();
 
-$sql = 'DELETE authors FROM authors WHERE id = :id';
+$sql = 'DELETE FROM authors WHERE authors.id = :id';
 
 $statement = getDatabase()->prepare($sql);
 $statement->bindParam(':id', $_GET['id'], PDO::PARAM_INT);

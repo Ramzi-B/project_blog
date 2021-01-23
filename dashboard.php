@@ -36,7 +36,7 @@ $currentPage = 1; // The current page set to 1
 // divide all posts by postsPerPages to get the number of posts per page
 $totalPages = (int)ceil($totalPosts/$postPerPage);
 
-// Check
+// Check empty page and if page > 0 and <= $totalPages
 if (isset($_GET['page']) && !empty($_GET['page']) &&
     $_GET['page'] > 0 && $_GET['page'] <= $totalPages)
 {

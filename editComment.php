@@ -45,7 +45,9 @@ if (isset($_POST) && !empty($_POST)) {
     // dd($_GET);
     // dd($_SESSION);
     // die();
-    $sql = 'UPDATE comments SET content = :content, updated = NOW() WHERE id = :id';
+    $sql = 'UPDATE comments SET comments.content = :content, comments.updated = NOW() 
+        WHERE comments.id = :id
+    ';
 
     $statement = getDatabase()->prepare($sql);
     $statement->bindParam(':content', $_POST['content'], PDO::PARAM_STR);

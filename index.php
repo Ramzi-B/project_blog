@@ -6,6 +6,7 @@
 
 include_once 'inc/utils.php';
 include_once 'inc/DatabaseConnection.php';
+include_once 'inc/DatabaseFunctions.php';
 
 /**
  * Start session
@@ -17,7 +18,7 @@ startSession();
  * Pagination
  ******************************************************************************/
 
-$sql = 'SELECT COUNT(*) AS totalPosts FROM posts';
+$sql = 'SELECT COUNT("id") AS totalPosts FROM posts';
 $statement = getDatabase()->query($sql);
 $result = $statement->fetch(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -27,7 +28,7 @@ $postPerPage = 4;
 $totalPages = ceil($totalPosts/$postPerPage);
 $currentPage = 1;
 
-// Check
+// Check empty page and if page > 0 and <= $totalPages
 if (isset($_GET['page']) && !empty($_GET['page']) && 
     $_GET['page'] > 0 && $_GET['page'] <= $totalPages) 
 {
@@ -101,23 +102,6 @@ $statement = getDatabase()->query($sql);
 $result = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
 $lastComments = $result;
-
-/**
- * Count all comments per post
- *******************************************************************************/
-
-function countComments(int $id)
-{
-    $sql = 'SELECT COUNT("id") AS totalComments FROM comments WHERE comments.post_id = :id';
-
-    $statement = getDatabase()->prepare($sql);
-    $statement->bindParam(':id', $id, PDO::PARAM_INT);
-    $statement->execute();
-    $result = $statement->fetch(PDO::FETCH_OBJ);
-    $statement->closeCursor();
-
-    return $result->totalComments;
-}
 
 // dd($_GET);
 // dd($lastComments);

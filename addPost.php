@@ -31,7 +31,7 @@ $statement->closeCursor();
 /**
  * Get all categories
  *******************************************************************************/
-$sql = 'SELECT categoreis.id, categories.categoryName FROM categories';
+$sql = 'SELECT categories.id, categories.categoryName FROM categories';
 $statement = getDatabase()->query($sql);
 $categories = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();

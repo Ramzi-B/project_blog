@@ -21,7 +21,7 @@ if (!isAuthenticated()) {
  * Delete the post and all its related comments
  *******************************************************************************/
 
-$sql = 'DELETE posts FROM posts WHERE posts.id = :id';
+$sql = 'DELETE FROM posts WHERE posts.id = :id';
 
 $statement = getDatabase()->prepare($sql);
 // dd($_GET);

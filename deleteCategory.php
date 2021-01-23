@@ -25,7 +25,7 @@ if (!isAuthenticated()) {
 // dd($_GET);
 // die();
 
-$sql = 'DELETE categories FROM categories WHERE id = :id';
+$sql = 'DELETE FROM categories WHERE categories.id = :id';
 
 $statement = getDatabase()->prepare($sql);
 $statement->bindParam(':id', $_GET['id'], PDO::PARAM_INT);
