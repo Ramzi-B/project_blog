@@ -2,7 +2,7 @@
 
 /**
  * Includes files
- *******************************************************************************/
+ ******************************************************************************/
 
 include_once 'inc/utils.php';
 include_once 'inc/DatabaseConnection.php';
@@ -10,53 +10,43 @@ include_once 'inc/DatabaseConnection.php';
 /**
  * Check if the admin user is logged in
  * if he is not redirected to the index page
- *******************************************************************************/
+ ******************************************************************************/
 
 if (!isAuthenticated()) {
     $_SESSION['flashbox']['danger'] = "Vous n'avez pas le droit d'accéder à cette page!";
     redirect('/', 301);
 }
 
-// debug($_SESSION);
-
 /**
- * Check for empty fields
+ * Get all comments
  *******************************************************************************/
 
-if (!empty($_POST)) {
+$sql = 'SELECT comments.* FROM comments';
+$statement = getDatabase()->prepare($sql);
+$statement->execute();
+$comments = $statement->fetchAll(PDO::FETCH_OBJ);
+$statement->closeCursor();
 
-    if (empty($_POST['name']) || empty($_POST['email'])) {
-        $_SESSION['flashbox']['danger'] = "Vous devez remplir tout les champs *";
-    }
+// dd($comments);
 
-    if (!empty($_POST['name']) && !empty($_POST['email'])) {
-        $sql = 'INSERT INTO authors(authorName, authorEmail) VALUES (:authorName, :authorEmail)';
-        $statement = getDatabase()->prepare($sql);
-        $statement->bindParam(':authorName', $_POST['name'], PDO::PARAM_STR);
-        $statement->bindParam(':authorEmail', $_POST['email'], PDO::PARAM_STR);
-        $statement->execute();
-        // debug($pdo->lastInsertId());
-        // die();
-        $statement->closeCursor();
 
-        $_SESSION['flashbox']['success'] = "L'auteur a bien été ajouté!";
-
-        redirect('dashboard.php');
-    }
-}
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- https://favicon.io/favicon-generator -->
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
-    <title>Ajouter un auteur</title>
+    <!-- Title -->
+    <title>Les commetaires</title>
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/normalize.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <!-- Normalize -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -78,33 +68,46 @@ if (!empty($_POST)) {
         </section>
     </header>
 
+    <!-- Main -->
     <main class="container">
 
-        <h1>Ajouter un auteur</h1>
+        <h1>Les derniers commentaires</h1>
 
         <!-- Session flash messages -->
         <?php if (isset($_SESSION['flashbox'])): ?>
             <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
-                <section class="flashbox flashbox-<?= $type; ?>">
+    			<section class="flashbox flashbox-<?= $type; ?>">
                     <span class="close"></span>
-                    <p><?= $message; ?></p>
+    				<p><?= $message; ?></p>
     			</section>
     		<?php endforeach ?>
     		<?php unset($_SESSION['flashbox']); ?>
     	<?php endif ?>
 
-        <form action="" method="POST">
+        <?php foreach ($comments as $comment): ?>
 
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" placeholder="Name *">
+            <article class="card">
+                <p><?= validate($comment->content) ?></p>
+                <em><?= validate(ucfirst($comment->name)) ?> le <?= validate($comment->created) ?></em>                
 
-            <label for="content">Email</label>
-            <input type="text" id="email" name="email" placeholder="Email *">
+                <div class="card_button">
 
-            <input class="btn" type="submit" value="Enregistrer">
-            <a class="btn" href="/dashboard.php">Annuler</a>
+                    <a class="btn" href="/editComment.php?id=<?= intval($comment->id) ?>">Modifier</a>
 
-        </form>
+                    <form action="/deleteComment.php?id=<?= intval($comment->id) ?>" method="POST"
+                        onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
+                        <input type="hidden" name="post_id" value="<?= intval($comment->post_id) ?>">
+                        <input type="hidden" name="id" value="<?= intval($comment->id) ?>">
+
+                        <!-- <input class="btn" type="submit" value="Supprimer"> -->                            
+                        <button class="btn" type="submit">Supprimer</button>
+                    </form>
+
+                </div>
+
+            </article>
+
+        <?php endforeach ?>
 
     </main>
 
@@ -112,6 +115,7 @@ if (!empty($_POST)) {
         <p>Mon blog &copy; <?= Date('Y') ?> All rights reserved</p>
     </footer>
 
+    <!-- JS -->
     <script src="js/main.js"></script>
 </body>
 </html>

@@ -20,59 +20,46 @@ if (!isAuthenticated()) {
 // debug($_SESSION);
 
 /**
- * Get all authors
- *******************************************************************************/
-
-$sql = 'SELECT id, authorName FROM authors';
-$statement = getDatabase()->query($sql);
-$authors = $statement->fetchAll(PDO::FETCH_OBJ);
-$statement->closeCursor();
-
-/**
- * Get all categories
- *******************************************************************************/
-$sql = 'SELECT id, categoryName FROM categories';
-$statement = getDatabase()->query($sql);
-$categories = $statement->fetchAll(PDO::FETCH_OBJ);
-$statement->closeCursor();
-
-/**
  * Check for empty fields
  *******************************************************************************/
 
 if (!empty($_POST)) {
 
-    if (empty($_POST['title']) || empty($_POST['content'])) {
-        $_SESSION['flashbox']['danger'] = "Vous devez remplir tout les champs *";
+    if (empty($_POST['category'])) {
+        $_SESSION['flashbox']['danger'] = "Le champ est vide *";
     }
 
-    if (!empty($_POST['title']) && !empty($_POST['content'])) {
-        $sql = 'INSERT INTO posts(title, content, author_id, category_id, created) VALUES (:title, :content, :author, :category, NOW())';
+    if (!empty($_POST['category'])) {
+        $sql = 'INSERT INTO categories(categories.categoryName, categories.created) 
+            VALUES (:categoryName, NOW())
+        ';
+
         $statement = getDatabase()->prepare($sql);
-        $statement->bindParam(':title', $_POST['title'], PDO::PARAM_STR);
-        $statement->bindParam(':content', $_POST['content'], PDO::PARAM_STR);
-        $statement->bindParam(':author', $_POST['author'], PDO::PARAM_INT);
-        $statement->bindParam(':category', $_POST['category'], PDO::PARAM_INT);
+        $statement->bindParam(':categoryName', $_POST['category'], PDO::PARAM_STR);
         $statement->execute();
         $statement->closeCursor();
 
-        $_SESSION['flashbox']['success'] = "L'article a bien été ajouté!";
+        $_SESSION['flashbox']['success'] = "La categorie a bien été ajoutée!";
 
-        redirect('dashboard.php');
+        redirect('/showCategories.php');
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- https://favicon.io/favicon-generator -->
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
-    <title>Ajouter un nouvel article</title>
+    <!-- Title -->
+    <title>Ajouter une catégorie</title>
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
+    <!-- Normalize -->
     <link rel="stylesheet" href="/css/normalize.css">
+    <!-- CSS -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -95,48 +82,26 @@ if (!empty($_POST)) {
         </section>
     </header>
 
+    <!-- Main -->
     <main class="container">
 
-        <h1>Ajouter un article</h1>
+        <h1>Ajouter une categorie</h1>
 
         <!-- Session flash messages -->
         <?php if (isset($_SESSION['flashbox'])): ?>
             <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
                 <section class="flashbox flashbox-<?= $type; ?>">
                     <span class="close"></span>
-                    <p><?= $message; ?></p>
+    				<p><?= $message; ?></p>
     			</section>
     		<?php endforeach ?>
     		<?php unset($_SESSION['flashbox']); ?>
     	<?php endif ?>
 
-        <p id="help-form-text"></p>
-
         <form action="" method="POST">
 
-            <label for="title">Titre</label>
-            <input type="text" id="title" name="title" placeholder="Votre titre *" data-help="Votre titre">
-
-            <label for="content">Article</label>
-            <textarea name="content" id="content" cols="30" rows="10" placeholder="Votre article *" data-help="Votre article"></textarea>
-
-            <label for="author">Auteur</label>
-            <select name="author" id="author" data-help="L'auteur">
-                <?php foreach ($authors as $author): ?>
-                    <option value="<?= intval($author->id) ?>">
-                        <?= validate(ucfirst($author->authorName)) ?>
-                    </option>
-                <?php endforeach ?>
-            </select>
-
             <label for="category">Catégorie</label>
-            <select name="category" id="category" data-help="La catégorie">
-                <?php foreach ($categories as $category): ?>
-                    <option value="<?= intval($category->id) ?>" data-help="Auteur">
-                        <?= validate(ucfirst($category->categoryName)) ?>
-                    </option>
-                <?php endforeach ?>
-            </select>
+            <input type="text" id="category" name="category" placeholder="Categorie *">
 
             <input class="btn" type="submit" value="Enregistrer">
             <a class="btn" href="/dashboard.php">Annuler</a>
@@ -149,6 +114,7 @@ if (!empty($_POST)) {
         <p>Mon blog &copy; <?= Date('Y') ?> All rights reserved</p>
     </footer>
 
+    <!-- JS -->
     <script src="js/main.js"></script>
 </body>
 </html>

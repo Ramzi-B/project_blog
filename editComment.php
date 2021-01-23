@@ -14,7 +14,6 @@ include_once 'inc/DatabaseConnection.php';
 
 if (!isAuthenticated()) {
     $_SESSION['flashbox']['danger'] = "Vous n'avez pas le droit d'accéder à cette page!";
-    // http_response_code(301);
     redirect('/', 301);
 }
 
@@ -24,7 +23,7 @@ if (!isAuthenticated()) {
 
 $sql = 'SELECT comments.id, comments.name, comments.content, comments.created,
         comments.updated, comments.post_id, comments.email
-    FROM comments WHERE id = :id
+    FROM comments WHERE comments.id = :id
 ';
 
 $statement = getDatabase()->prepare($sql);
@@ -35,7 +34,7 @@ $statement->closeCursor();
 
 // dd($_POST);
 // dd($_GET);
-dd($comment);
+// dd($comment);
 
 /**
  * Check
@@ -53,10 +52,10 @@ if (isset($_POST) && !empty($_POST)) {
     $statement->bindParam(':id', $_POST['id'], PDO::PARAM_STR);
     $statement->execute();
     $statement->closeCursor();
-    
+
     $_SESSION['flashbox']['success'] = "Le commmentaire a bien été modifié!";
 
-    redirect('/showpost.php?id=' . $_POST['postid']);
+    redirect('showPost.php?id=' . intval($_POST['postid']));
 }
 ?>
 <!DOCTYPE html>
@@ -96,8 +95,12 @@ if (isset($_POST) && !empty($_POST)) {
             </section>
         </header>
 
+        <!-- Main -->
         <main class="container">
+        
+            <h1>Modifier le commentaire</h1>
 
+            <!-- Session flash messages -->
             <?php if (isset($_SESSION['flashbox'])): ?>
                 <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
                     <section class="flashbox flashbox-<?= $type; ?>">
@@ -108,15 +111,13 @@ if (isset($_POST) && !empty($_POST)) {
                 <?php unset($_SESSION['flashbox']); ?>                
         	<?php endif ?>
 
-            <h1>Modifier le commentaire</h1>
-
-            <form action="" method="POST">
+            <form action="" method="post">
 
                 <input type="hidden" name="postid" value="<?= intval($comment->post_id) ?>">
                 <input type="hidden" name="id" value="<?= intval($comment->id) ?>">
 
-                <label for="title">Commentaire</label>
-                <input type="text" id="title" name="content" value="<?= validate($comment->content) ?>">
+                <label for="content">Commentaire</label>
+                <textarea name="content" id="content" cols="30" rows="10"><?= validate($comment->content) ?></textarea>
 
                 <input class="btn" type="submit" value="Mettre à jour">
                 <a class="btn" href="/dashboard.php">Annuler</a>
@@ -129,6 +130,7 @@ if (isset($_POST) && !empty($_POST)) {
             <p>Mon blog &copy; <?= Date('Y') ?> All rights reserved</p>
         </footer>
 
+        <!-- JS -->
         <script src="/js/main.js"></script>
     </body>
 </html>

@@ -57,9 +57,9 @@ $statement->closeCursor();
  ******************************************************************************/
 
 if (isset($_POST) && !empty($_POST)) {
-    $sql = 'UPDATE posts SET title = :title, content = :content, author_id = :author,
-            category_id = :category, updated = NOW() 
-        WHERE id = :id
+    $sql = 'UPDATE posts SET posts.title = :title, posts.content = :content, posts.author_id = :author,
+            .posts.category_id = :category, posts.updated = NOW() 
+        WHERE posts.id = :id
     ';
 
     $statement = getDatabase()->prepare($sql);
@@ -81,16 +81,19 @@ if (isset($_POST) && !empty($_POST)) {
 
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
+        <!-- Title -->
         <title>Modifier l'article</title>
         <!-- Font Awesome CDN -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
+        <!-- Normalize -->
         <link rel="stylesheet" href="/css/normalize.css">
+        <!-- CSS -->
         <link rel="stylesheet" href="/css/style.css">
     </head>
     <body>
@@ -115,6 +118,9 @@ if (isset($_POST) && !empty($_POST)) {
 
         <main class="container">
 
+            <h1>Modifier l'article</h1>
+
+            <!-- Session flash messages -->
             <?php if (isset($_SESSION['flashbox'])): ?>
                 <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
                     <section class="flashbox flashbox-<?= $type; ?>">
@@ -124,8 +130,6 @@ if (isset($_POST) && !empty($_POST)) {
         		<?php endforeach ?>
         		<?php unset($_SESSION['flashbox']); ?>
         	<?php endif ?>
-
-            <h1>Modifier l'article</h1>
 
             <form action="" method="POST">
 
@@ -166,6 +170,7 @@ if (isset($_POST) && !empty($_POST)) {
             <p>Mon blog &copy; <?= Date('Y') ?> All rights reserved</p>
         </footer>
 
+        <!-- JS -->
         <script src="js/main.js"></script>
     </body>
 </html>

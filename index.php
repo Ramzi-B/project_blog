@@ -56,7 +56,7 @@ $sql = 'SELECT posts.id, posts.title, posts.content, posts.author_id,
             ON posts.author_id = authors.id
         JOIN categories 
             ON posts.category_id = categories.id
-        ORDER BY created DESC LIMIT
+        ORDER BY posts.created DESC LIMIT
 '. $startCount . ',' . $postPerPage;
 
 $statement = getDatabase()->query($sql);
@@ -71,7 +71,7 @@ $statement->closeCursor();
  * Get all categories
  ******************************************************************************/
 
-$sql = 'SELECT id, categoryName FROM categories';
+$sql = 'SELECT categories.id, categories.categoryName FROM categories';
 $statement = getDatabase()->query($sql);
 $categories = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -81,7 +81,7 @@ $statement->closeCursor();
  ******************************************************************************/
 
 $sql = 'SELECT posts.id, posts.title FROM posts 
-    ORDER BY created DESC LIMIT 0, 3
+    ORDER BY posts.created DESC LIMIT 0, 3
 ';
 $statement = getDatabase()->query($sql);
 $result = $statement->fetchAll(PDO::FETCH_OBJ);
@@ -101,6 +101,23 @@ $statement = getDatabase()->query($sql);
 $result = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
 $lastComments = $result;
+
+/**
+ * Count all comments per post
+ *******************************************************************************/
+
+function countComments(int $id)
+{
+    $sql = 'SELECT COUNT("id") AS totalComments FROM comments WHERE comments.post_id = :id';
+
+    $statement = getDatabase()->prepare($sql);
+    $statement->bindParam(':id', $id, PDO::PARAM_INT);
+    $statement->execute();
+    $result = $statement->fetch(PDO::FETCH_OBJ);
+    $statement->closeCursor();
+
+    return $result->totalComments;
+}
 
 // dd($_GET);
 // dd($lastComments);
@@ -135,11 +152,15 @@ $lastComments = $result;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- https://favicon.io/favicon-generator -->
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
+    <!-- Title -->
     <title>Mon blog</title>
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
+    <!-- Normalize -->
     <link rel="stylesheet" href="/css/normalize.css">
+    <!-- CSS -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -180,9 +201,13 @@ $lastComments = $result;
 
         <!-- Pagination -->
         <ul class="pagination">
+
             <?php if ($currentPage > 1): ?>
                 <li class="prev">
-                    <a href="/index.php?page=<?= $currentPage - 1 ?>"><i class="fas fa-chevron-left"></i></a>
+                    <a href="/index.php?page=<?= $currentPage - 1 ?>">
+                        <!-- <i class="fas fa-chevron-left"></i> -->
+                        <i class="far fa-arrow-alt-circle-left"></i>
+                    </a>
                 </li>
             <?php endif ?>
 
@@ -194,9 +219,13 @@ $lastComments = $result;
 
             <?php if ($currentPage < $totalPages): ?>
                 <li class="next">
-                    <a href="/index.php?page=<?= $currentPage + 1 ?>"><i class="fas fa-chevron-right"></i></a>
+                    <a href="/index.php?page=<?= $currentPage + 1 ?>">
+                        <!-- <i class="fas fa-chevron-right"></i> -->
+                        <i class="far fa-arrow-alt-circle-right"></i>
+                    </a>
                 </li>
             <?php endif ?>
+
         </ul>
 
         <!-- List of posts -->
@@ -209,12 +238,15 @@ $lastComments = $result;
                     <section class="card__header">
                         <h2><?= validate(ucfirst($post->title)) ?></h2>
                         <small>
-                            <em><?= validate(ucfirst($post->author)) ?> le <?= validate($post->created) ?></em>
-                            <em>Categorie:
-                                <a href="/category.php?id=<?= intval($post->category_id) ?>">
-                                    <?= validate(ucfirst($post->category)) ?>
-                                </a>
-                            </em>
+                            <i class="far fa-user"></i>&nbsp;<?= validate(ucfirst($post->author)) ?> 
+                            <i class="far fa-comment"></i>&nbsp;<?= intval(countComments($post->id)) ?>
+                            <br>
+                            <i class="far fa-calendar-alt"></i>&nbsp;<?= validate($post->created) ?>
+                            <i class="fas fa-tag"></i>&nbsp;
+                            <a href="/category.php?id=<?= intval($post->category_id) ?>">
+                                <?= validate(ucfirst($post->category)) ?>
+                            </a>
+                            </span>
                         </small>
                     </section>
 
@@ -223,7 +255,7 @@ $lastComments = $result;
                     </section>
                     
                     <section class="card__footer">
-                        <p><a class="btn" href="/showpost.php?id=<?= intval($post->id) ?>">Voir plus</a></p>
+                        <p><a class="btn" href="/showPost.php?id=<?= intval($post->id) ?>">Voir plus</a></p>
                     </section>
 
                 </article>
@@ -252,7 +284,7 @@ $lastComments = $result;
             <ul>
                 <?php foreach ($lastPosts as $lastPost): ?>
                     <li>
-                        <a href="/showpost.php?id=<?= intval($lastPost->id) ?>">
+                        <a href="/showPost.php?id=<?= intval($lastPost->id) ?>">
                             <?= validate(ucfirst($lastPost->title)) ?>
                         </a>
                     </li>
@@ -281,6 +313,7 @@ $lastComments = $result;
         <p>Mon blog &copy; <?= Date('Y') ?> All rights reserved</p>
     </footer>
 
+    <!-- JS -->
     <script src="js/main.js"></script>
 </body>
 </html>

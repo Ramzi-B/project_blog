@@ -58,13 +58,18 @@ $statement->closeCursor();
  * Count all comments per post
  *******************************************************************************/
 
-$sql = 'SELECT COUNT(*) AS totalComments FROM comments WHERE post_id = :id';
-$statement = getDatabase()->prepare($sql);
-$statement->bindParam(':id',  $_GET['id'], PDO::PARAM_INT);
-$statement->execute();
-$result = $statement->fetch(PDO::FETCH_OBJ);
-$statement->closeCursor();
-$totalPostComments = $result->totalComments;
+function countComments(int $id)
+{
+    $sql = 'SELECT COUNT("id") AS totalComments FROM comments WHERE comments.post_id = :id';
+
+    $statement = getDatabase()->prepare($sql);
+    $statement->bindParam(':id', $id, PDO::PARAM_INT);
+    $statement->execute();
+    $result = $statement->fetch(PDO::FETCH_OBJ);
+    $statement->closeCursor();
+
+    return $result->totalComments;
+}
 
 // debug($totalComments);
 
@@ -92,22 +97,26 @@ if (isset($_POST) && !empty($_POST)) {
         
         $_SESSION['flashbox']['success'] = 'Votre commentaire a bien été ajouté!';
 
-        redirect('showpost.php?id=' . intval($_POST['post_id']));
+        redirect('showPost.php?id=' . intval($_POST['post_id']));
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- https://favicon.io/favicon-generator -->
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
+    <!-- Title -->
     <title><?= validate($post->title) ?></title>
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/normalize.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <!-- Normalize -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -134,14 +143,21 @@ if (isset($_POST) && !empty($_POST)) {
 
         <h1><?= validate(ucfirst($post->title)) ?></h1>
 
-        <em>
-            Posté par <?= validate(ucfirst($post->authorName)) ?> le <?= validate($post->created) ?>
-            Categorie&nbsp;:
-            <a href="/category.php?id=<?= intval($post->category_id) ?>">
-                &nbsp;<?= validate(ucfirst($post->categoryName)) ?>
-            </a>
-        </em>
+        <small>
+            <i class="far fa-user">&nbsp;</i><?= validate(ucfirst($post->authorName)) ?>&nbsp;
+            <i class="far fa-calendar-alt"></i>&nbsp;<?= validate($post->created) ?>
 
+     
+            <i class="fas fa-tag"></i>&nbsp;
+            <a href="category.php?id=<?= intval($post->category_id) ?>">
+                <?= validate(ucfirst($post->categoryName)) ?>
+            </a>
+
+            &nbsp;<i class="far fa-comment"></i><?= intval(countComments($post->id)) ?>
+
+        </small>
+
+        <!-- Session flash messages -->
         <?php if (isset($_SESSION['flashbox'])): ?>
             <?php foreach ($_SESSION['flashbox'] as $type => $message): ?>
     			<section class="flashbox flashbox-<?= $type; ?>">
@@ -152,39 +168,41 @@ if (isset($_POST) && !empty($_POST)) {
     		<?php unset($_SESSION['flashbox']); ?>
     	<?php endif ?>
 
-        
+        <!-- if admin connected show buttons -->
         <?php if (isset($_SESSION['auth'])): ?>
-            <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
-            <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST"
+            <a class="btn" href="/editPost.php?id=<?= intval($post->id) ?>">Modifier</a>
+            <form action="/deletePost.php?id=<?= intval($post->id) ?>" method="POST"
                 onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
                 <input type="hidden" name="id" value="<?= intval($post->id) ?>">
                 <input class="btn" type="submit" value="Supprimer">
             </form>
-        <?php endif ?>        
+        <?php endif ?>
 
         <p><?= nl2br(validate($post->content)) ?></p>
 
         <h3>Les derniers commentaires</h3>
 
-        <p class="total-comments"><?= $totalPostComments ?>&nbsp;<i class="far fa-comment"></i></p>
-
         <?php foreach ($comments as $comment): ?>
             <article class="card">
                 <p><?= validate($comment->content) ?></p>
-                <em><?= validate(ucfirst($comment->name)) ?> le <?= validate($comment->created) ?></em>
+                <em>
+                    <i class="far fa-user"></i><?= validate(ucfirst($comment->name)) ?> 
+                    <i class="far fa-calendar-alt"></i><?= validate($comment->created) ?>
+                </em>
                 
                 <!-- if admin connected show buttons -->
                 <?php if (isAuthenticated()): ?>
 
                     <div class="card_button">
 
-                        <a class="btn" href="/editcomment.php?id=<?= intval($comment->id) ?>">Modifier</a>
+                        <a class="btn" href="/editComment.php?id=<?= intval($comment->id) ?>">Modifier</a>
     
-                        <form action="/deletecomment.php?id=<?= intval($comment->id) ?>" method="POST"
+                        <form action="/deleteComment.php?id=<?= intval($comment->id) ?>" method="POST"
                             onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
                             <input type="hidden" name="post_id" value="<?= intval($comment->post_id) ?>">
                             <input type="hidden" name="id" value="<?= intval($comment->id) ?>">
-                            <!-- <input type="submit" value="Suprimer"> -->
+
+                            <!-- <input class="btn" type="submit" value="Supprimer"> -->                            
                             <button class="btn" type="submit">Supprimer</button>
                         </form>
 
@@ -194,9 +212,9 @@ if (isset($_POST) && !empty($_POST)) {
             </article>
         <?php endforeach ?>
 
-        <h3>Laisser un commentaire</h3>
+        <h3>Laisser votre commentaire</h3>
 
-        <p>Votre adresse email ne sera pas publiée. Les champs obligatoires sont marqués d'un astérisque *.</p>
+        <small>Votre adresse email ne sera pas publiée. Les champs obligatoires sont marqués d'un astérisque *.</small>
 
         <p id="help-form-text"></p>
 
@@ -226,6 +244,7 @@ if (isset($_POST) && !empty($_POST)) {
         <p>Mon blog &copy; <?= Date('Y') ?> All rights reserved</p>
     </footer>
 
+    <!-- JS -->
     <script src="js/main.js"></script>
 </body>
 </html>

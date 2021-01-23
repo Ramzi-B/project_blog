@@ -17,7 +17,7 @@ startSession();
  * Get all categories
  ******************************************************************************/
 
-$sql = 'SELECT id, categoryName FROM categories';
+$sql = 'SELECT categories.id, categories.categoryName FROM categories';
 $statement = getDatabase()->query($sql);
 $categories = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -27,19 +27,36 @@ $statement->closeCursor();
  ******************************************************************************/
 
 $sql = 'SELECT
-            posts.id, title, content, author_id, category_id, created,
+            posts.id, posts.title, posts.content, posts.author_id, posts.category_id, posts.created,
             authors.authorName,
             categories.categoryName
     FROM posts
     INNER JOIN authors ON posts.author_id = authors.id
     INNER JOIN categories ON posts.category_id = categories.id
-    WHERE posts.category_id = :id ORDER BY created
+    WHERE posts.category_id = :id ORDER BY posts.created
 ';
 $statement = getDatabase()->prepare($sql);
 $statement->bindParam(':id', $_GET['id'], PDO::PARAM_INT);
 $statement->execute();
 $posts = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
+
+/**
+ * Count all comments per post
+ *******************************************************************************/
+
+function countComments(int $id)
+{
+    $sql = 'SELECT COUNT("id") AS totalComments FROM comments WHERE comments.post_id = :id';
+
+    $statement = getDatabase()->prepare($sql);
+    $statement->bindParam(':id', $id, PDO::PARAM_INT);
+    $statement->execute();
+    $result = $statement->fetch(PDO::FETCH_OBJ);
+    $statement->closeCursor();
+
+    return $result->totalComments;
+}
 
 // dd($posts);
 // dd($categories);
@@ -50,16 +67,20 @@ $statement->closeCursor();
 
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+     <!-- https://favicon.io/favicon-generator -->
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
-    <title>Categorie <?= validate($posts[0]->categoryName ?? 'Mon blog') ?></title>
+    <!-- Title -->
+    <title>Categorie <?= validate($posts[0]->categoryName ?? 'Categories') ?></title>
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
+    <!-- Normalize -->
     <link rel="stylesheet" href="/css/normalize.css">
+    <!-- CSS -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -98,13 +119,21 @@ $statement->closeCursor();
                 <article class="card">
                     <h2 class=""><?= validate(ucfirst($post->title)) ?></h2>
 
-                    <em>Categorie: <a href="/category.php?id=<?= intval($post->category_id) ?>"><?= validate($post->categoryName) ?></a></em></br>
-
-                    <em>Posté par <?= validate($post->authorName) ?> le <?= validate($post->created) ?></em>
+                    <small>
+                        <i class="far fa-user"></i>&nbsp;<?= validate(ucfirst($post->authorName)) ?> 
+                        <i class="far fa-comment"></i>&nbsp;<?= intval(countComments($post->id)) ?>
+                        <br>
+                        <i class="far fa-calendar-alt"></i>&nbsp;<?= validate($post->created) ?>
+                        Categorie:&nbsp;
+                        <a href="/category.php?id=<?= intval($post->category_id) ?>">
+                            <?= validate(ucfirst($post->categoryName)) ?>
+                        </a>
+                        </span>
+                    </small>
 
                     <p><?= nl2br(substr(validate($post->content), 0, 100)) ?>&nbsp...</p>
 
-                    <p><a class="btn" href="/showpost.php?id=<?= intval($post->id) ?>">Voir plus</a></p>
+                    <p><a class="btn" href="/showPost.php?id=<?= intval($post->id) ?>">Voir plus</a></p>
 
                 </article>
 
@@ -113,7 +142,9 @@ $statement->closeCursor();
         </section>
 
         <aside class="categories">
+
             <h4>Categories</h4>
+            
             <ul>
                 <?php foreach ($categories as $category): ?>
                     <li>
@@ -136,6 +167,7 @@ $statement->closeCursor();
         <p>Mon blog &copy; <?= Date('Y') ?> All rights reserved</p>
     </footer>
 
+    <!-- JS -->
     <script src="js/main.js"></script>
 </body>
 </html>

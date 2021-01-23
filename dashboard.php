@@ -36,8 +36,6 @@ $currentPage = 1; // The current page set to 1
 // divide all posts by postsPerPages to get the number of posts per page
 $totalPages = (int)ceil($totalPosts/$postPerPage);
 
-// $page = $_GET['page'];
-
 // Check
 if (isset($_GET['page']) && !empty($_GET['page']) &&
     $_GET['page'] > 0 && $_GET['page'] <= $totalPages)
@@ -69,13 +67,13 @@ $startCount = ($currentPage - 1) * $postPerPage;
  ******************************************************************************/
 
 $sql = 'SELECT
-            posts.id, title, content, author_id, category_id, created,
+            posts.id, posts.title, posts.content, posts.author_id, posts.category_id, posts.created,
             authors.authorName,
             categories.categoryName
         FROM posts
         INNER JOIN authors ON posts.author_id = authors.id
         INNER JOIN categories ON posts.category_id = categories.id
-        ORDER BY created DESC LIMIT
+        ORDER BY posts.created DESC LIMIT
 '. $startCount . ',' . $postPerPage;
 
 $statement = getDatabase()->query($sql);
@@ -88,7 +86,7 @@ $statement->closeCursor();
  * Get all categories
  ******************************************************************************/
 
-$sql = 'SELECT id, categoryName FROM categories';
+$sql = 'SELECT categories.id, categories.categoryName FROM categories';
 $statement = getDatabase()->query($sql);
 $categories = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -97,7 +95,7 @@ $statement->closeCursor();
  * Count all authors
  ******************************************************************************/
 
-$sql = 'SELECT COUNT(*) AS totalAuthors FROM authors';
+$sql = 'SELECT COUNT("id") AS totalAuthors FROM authors';
 $statement = getDatabase()->query($sql);
 $result = $statement->fetch(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -107,7 +105,7 @@ $totalAuthors = $result->totalAuthors;
  * Count all categories
  ******************************************************************************/
 
-$sql = 'SELECT COUNT(*) AS totalCategories FROM categories';
+$sql = 'SELECT COUNT("id") AS totalCategories FROM categories';
 $statement = getDatabase()->query($sql);
 $result = $statement->fetch(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -117,7 +115,7 @@ $totalCategories = $result->totalCategories;
  * Count all comments
  ******************************************************************************/
 
-$sql = 'SELECT COUNT(*) AS totalComments FROM comments';
+$sql = 'SELECT COUNT("id") AS totalComments FROM comments';
 $statement = getDatabase()->query($sql);
 $result = $statement->fetch(PDO::FETCH_OBJ);
 $statement->closeCursor();
@@ -137,16 +135,20 @@ $totalComments = $result->totalComments;
 
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
 <head>
 	<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- https://favicon.io/favicon-generator -->
     <link type="image/x-icon" rel="shortcut icon" href="/img/icon/favicon.ico">
+    <!-- Title -->
     <title>Dashboard</title>
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous">
+    <!-- Normalize -->
     <link rel="stylesheet" href="/css/normalize.css">
+    <!-- CSS -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -182,7 +184,6 @@ $totalComments = $result->totalComments;
     		<?php unset($_SESSION['flashbox']); ?>
     	<?php endif ?>
 
-
         <section class="dashboard">
             <table>
                 <thead>
@@ -204,9 +205,12 @@ $totalComments = $result->totalComments;
             </table>
 
             <nav>
-                <a class="btn" href="/addpost.php">Ajouter un article</a>
-                <a class="btn" href="/addauthor.php">Ajouter un auteur</a>
-                <a class="btn" href="/addcategory.php">Ajouter une catégorie</a>
+                <a class="btn" href="/addPost.php">Ajouter un article</a>
+                <a class="btn" href="/addAuthor.php">Ajouter un auteur</a>
+                <a class="btn" href="/addCategory.php">Ajouter une catégorie</a>
+                <a class="btn" href="/showAuthors.php">Les auteurs</a>
+                <a class="btn" href="/showCategories.php">Les catégorie</a>
+                <a class="btn" href="/showComments.php">Les commentaires</a>
             </nav>
         </section>
 
@@ -233,6 +237,7 @@ $totalComments = $result->totalComments;
 
         </ul>
 
+        <!-- List of posts -->
         <section class="post-content">
 
             <?php foreach ($posts as $post): ?>
@@ -240,7 +245,7 @@ $totalComments = $result->totalComments;
                 <article class="card">
 
                     <h2 class="">
-                        <a href="/showpost.php?id=<?= intval($post->id) ?>"><?= validate(ucfirst($post->title)) ?></a>
+                        <a href="/showPost.php?id=<?= intval($post->id) ?>"><?= validate(ucfirst($post->title)) ?></a>
                     </h2>
 
                     <em><?= validate(ucfirst($post->authorName)) ?> le <?= validate($post->created) ?></em>
@@ -255,9 +260,9 @@ $totalComments = $result->totalComments;
 
                     <p><?= nl2br(substr(validate($post->content), 0, 100)) ?>&nbsp;...</p>
 
-                    <a class="btn" href="/editpost.php?id=<?= intval($post->id) ?>">Modifier</a>
+                    <a class="btn" href="/editPost.php?id=<?= intval($post->id) ?>">Modifier</a>
 
-                    <form action="/deletepost.php?id=<?= intval($post->id) ?>" method="POST"
+                    <form action="/deletePost.php?id=<?= intval($post->id) ?>" method="POST"
                         onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')" style="display:inline;">
                         <input type="hidden" name="id" value="<?= intval($post->id) ?>">
                         <input class="btn" type="submit" value="Supprimer">
@@ -294,6 +299,7 @@ $totalComments = $result->totalComments;
         <p>Mon blog &copy; <?= Date('Y') ?> All rights reserved</p>
     </footer>
 
+    <!-- JS -->
     <script src="js/main.js"></script>
 </body>
 </html>
