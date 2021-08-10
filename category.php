@@ -6,7 +6,6 @@
 
 include_once 'inc/utils.php';
 include_once 'inc/DatabaseConnection.php';
-include_once 'inc/DatabaseFunctions.php';
 
 /**
  * Check if a session is already started if it is not started
@@ -41,6 +40,23 @@ $statement->bindParam(':id', $_GET['id'], PDO::PARAM_INT);
 $statement->execute();
 $posts = $statement->fetchAll(PDO::FETCH_OBJ);
 $statement->closeCursor();
+
+/**
+ * Count all comments per post
+ *******************************************************************************/
+
+function countComments(int $id)
+{
+    $sql = 'SELECT COUNT("id") AS totalComments FROM comments WHERE comments.post_id = :id';
+
+    $statement = getDatabase()->prepare($sql);
+    $statement->bindParam(':id', $id, PDO::PARAM_INT);
+    $statement->execute();
+    $result = $statement->fetch(PDO::FETCH_OBJ);
+    $statement->closeCursor();
+
+    return $result->totalComments;
+}
 
 // dd($posts);
 // dd($categories);

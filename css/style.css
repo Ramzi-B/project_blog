@@ -269,12 +269,6 @@ textarea {
   padding-bottom: 1.5em;
 }
 
-.categories ul li a {
-  font-size: 1.2rem;
-  text-transform: uppercase;
-}
-
-
 .post-content {
   display: -webkit-flex;
   display: -ms-flex;
